@@ -1,0 +1,311 @@
+/* Global styles for Lossly */
+
+/* Import Inter font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+/* Import Fira Code for monospace */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap');
+
+/* CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Prevent text selection on UI elements */
+.no-select {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+/* Utility classes */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-in {
+  animation: slideIn 0.3s ease-out;
+}
+
+.pulse {
+  animation: pulse 2s infinite;
+}
+
+/* Loading skeleton effect */
+.skeleton {
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0.05) 100%);
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite;
+}
+
+/* Drag and drop styles */
+.drag-active {
+  position: relative;
+  overflow: hidden;
+}
+
+.drag-active::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #9F7AEA, #00BCD4);
+  border-radius: inherit;
+  z-index: -1;
+  animation: pulse 1s infinite;
+}
+
+.drag-active::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+/* Image comparison slider */
+.comparison-slider {
+  position: relative;
+  overflow: hidden;
+  cursor: col-resize;
+}
+
+.comparison-slider-handle {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: #00BCD4;
+  cursor: col-resize;
+  transition: width 0.2s ease;
+  z-index: 10;
+}
+
+.comparison-slider-handle:hover {
+  width: 6px;
+}
+
+.comparison-slider-handle::before,
+.comparison-slider-handle::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  width: 40px;
+  height: 40px;
+  background: #00BCD4;
+  border: 3px solid white;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.comparison-slider-handle::before {
+  left: -20px;
+}
+
+.comparison-slider-handle::after {
+  right: -20px;
+}
+
+/* Progress bar animations */
+.progress-animated {
+  position: relative;
+  overflow: hidden;
+}
+
+.progress-animated::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(90deg,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+/* File type badges */
+.file-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.file-badge-jpeg,
+.file-badge-jpg {
+  background: rgba(239, 68, 68, 0.2);
+  color: #EF4444;
+}
+
+.file-badge-png {
+  background: rgba(59, 130, 246, 0.2);
+  color: #3B82F6;
+}
+
+.file-badge-webp {
+  background: rgba(16, 185, 129, 0.2);
+  color: #10B981;
+}
+
+.file-badge-gif {
+  background: rgba(168, 85, 247, 0.2);
+  color: #A855F7;
+}
+
+.file-badge-svg {
+  background: rgba(251, 191, 36, 0.2);
+  color: #FBBF24;
+}
+
+/* Notification animations */
+.notification-enter {
+  animation: slideIn 0.3s ease-out;
+}
+
+.notification-exit {
+  animation: slideIn 0.3s ease-out reverse;
+}
+
+/* Custom focus styles */
+*:focus-visible {
+  outline: 2px solid #00BCD4;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Disable focus outline for mouse users */
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Platform-specific styles */
+.platform-darwin .titlebar {
+  padding-left: 80px;
+  /* Space for macOS traffic lights */
+}
+
+.platform-win32 .titlebar,
+.platform-linux .titlebar {
+  -webkit-app-region: drag;
+}
+
+.platform-win32 .titlebar button,
+.platform-linux .titlebar button {
+  -webkit-app-region: no-drag;
+}
+
+/* Accessibility - High contrast mode */
+@media (prefers-contrast: high) {
+  .glass {
+    background-color: rgba(0, 0, 0, 0.9) !important;
+    border-width: 2px !important;
+  }
+
+  *:focus-visible {
+    outline-width: 3px;
+  }
+}
+
+/* Accessibility - Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  body {
+    background: white;
+    color: black;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+}
