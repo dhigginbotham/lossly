@@ -1,42 +1,34 @@
-import { app, BrowserWindow, ipcMain, dialog, shell } from 'electron';
+import { app, shell, BrowserWindow, ipcMain, dialog } from 'electron';
 import { join } from 'path';
-import { electronApp, optimizer, is } from '@electron-toolkit/utils';
-import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { initializeDatabase } from '../backend/services/databaseService.js';
-import { startExpressServer } from '../backend/server.js';
-import { WorkerPoolManager } from '../backend/services/workerPoolService.js';
+
+// Icon path
+const iconPath = process.platform === 'linux'
+  ? join(__dirname, '../../resources/icon.png')
+  : undefined;
 
 // Configure logging
 log.transports.file.level = 'info';
-autoUpdater.logger = log;
 
-// Global reference to prevent garbage collection
-let mainWindow = null;
-let expressServer = null;
-let workerPool = null;
+// Main window reference
+let mainWindow;
 
-// Enable sandboxing for all renderers
-app.enableSandbox();
+// Backend server URL
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:3001';
 
 function createWindow () {
-  // Create the browser window
+  // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 1400,
-    height: 900,
-    minWidth: 1000,
-    minHeight: 700,
+    width: 1200,
+    height: 800,
     show: false,
     autoHideMenuBar: true,
-    titleBarStyle: process.platform === 'darwin' ? 'hiddenInset' : 'default',
-    backgroundColor: '#1A202C',
-    icon: join(__dirname, '../../public/icon.png'),
+    ...(process.platform === 'linux' && iconPath ? { icon: iconPath } : {}),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
-      sandbox: true,
-      contextIsolation: true,
+      sandbox: false,
       nodeIntegration: false,
-      webSecurity: true
+      contextIsolation: true
     }
   });
 
@@ -49,185 +41,153 @@ function createWindow () {
     return { action: 'deny' };
   });
 
-  // Load the app
-  if (is.dev && process.env['ELECTRON_RENDERER_URL']) {
+  // HMR for renderer base on electron-vite cli.
+  // Load the remote URL for development or the local html file for production.
+  if (process.env.NODE_ENV === 'development' && process.env['ELECTRON_RENDERER_URL']) {
     mainWindow.loadURL(process.env['ELECTRON_RENDERER_URL']);
   } else {
-    mainWindow.loadFile(join(__dirname, '../renderer/index.html'));
-  }
-
-  // Open DevTools in development
-  if (is.dev) {
-    mainWindow.webContents.openDevTools();
+    mainWindow.loadFile(join(__dirname, '../../out/renderer/index.html'));
   }
 }
 
-// App event handlers
-app.whenReady().then(async () => {
-  // Set app user model ID for Windows
-  electronApp.setAppUserModelId('com.lossly.app');
+// This method will be called when Electron has finished
+// initialization and is ready to create browser windows.
+// Some APIs can only be used after this event occurs.
+app.whenReady().then(() => {
+  // Initialize auto-updater after app is ready
+  const { autoUpdater } = require('electron-updater');
+  autoUpdater.logger = log;
+
+  // Set app user model id for windows
+  if (process.platform === 'win32') {
+    app.setAppUserModelId('com.lossly');
+  }
 
   // Default open or close DevTools by F12 in development
-  // and ignore CommandOrControl + R in production
+  // and ignore CommandOrControl + R in production.
   app.on('browser-window-created', (_, window) => {
-    optimizer.watchWindowShortcuts(window);
-  });
-
-  // Initialize services
-  try {
-    // Initialize database
-    await initializeDatabase();
-    log.info('Database initialized');
-
-    // Start Express server
-    expressServer = await startExpressServer();
-    log.info('Express server started on port 3001');
-
-    // Initialize worker pool
-    workerPool = new WorkerPoolManager({
-      minWorkers: 1,
-      maxWorkers: Math.max(1, require('os').cpus().length - 1),
-      idleTimeout: 60000,
-      taskTimeout: 300000
+    window.webContents.on('before-input-event', (event, input) => {
+      // F12 toggles DevTools in development
+      if (input.key === 'F12') {
+        if (process.env.NODE_ENV === 'development' || !app.isPackaged) {
+          window.webContents.toggleDevTools();
+        }
+        event.preventDefault();
+      }
+      // Prevent refresh in production
+      if (app.isPackaged && ((input.control || input.meta) && input.key === 'r')) {
+        event.preventDefault();
+      }
     });
-    log.info('Worker pool initialized');
+  });
 
-    // Create main window
-    createWindow();
-
-    // Check for updates
-    if (!is.dev) {
-      autoUpdater.checkForUpdatesAndNotify();
+  // IPC handlers
+  ipcMain.handle('dialog:openFile', async () => {
+    const { canceled, filePaths } = await dialog.showOpenDialog({
+      properties: ['openFile'],
+      filters: [
+        { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    if (!canceled) {
+      return filePaths[0];
     }
-  } catch (error) {
-    log.error('Failed to initialize app:', error);
-    dialog.showErrorBox('Initialization Error',
-      'Failed to start Lossly. Please try reinstalling the application.');
-    app.quit();
-  }
-});
+    return null;
+  });
 
-// Handle app activation (macOS)
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createWindow();
-  }
-});
+  ipcMain.handle('dialog:saveFile', async (event, defaultName) => {
+    const { canceled, filePath } = await dialog.showSaveDialog({
+      defaultPath: defaultName,
+      filters: [
+        { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] },
+        { name: 'All Files', extensions: ['*'] }
+      ]
+    });
+    if (!canceled) {
+      return filePath;
+    }
+    return null;
+  });
 
-// Prevent multiple instances
-const gotTheLock = app.requestSingleInstanceLock();
+  ipcMain.handle('dialog:showOpenDialog', async (event, options) => {
+    const result = await dialog.showOpenDialog(options);
+    return result;
+  });
 
-if (!gotTheLock) {
-  app.quit();
-} else {
-  app.on('second-instance', () => {
-    // Someone tried to run a second instance, focus our window instead
-    if (mainWindow) {
-      if (mainWindow.isMinimized()) mainWindow.restore();
-      mainWindow.focus();
+  ipcMain.handle('file:getStats', async (event, filePath) => {
+    const fs = require('fs').promises;
+    try {
+      const stats = await fs.stat(filePath);
+      return {
+        size: stats.size,
+        isFile: stats.isFile(),
+        isDirectory: stats.isDirectory(),
+        mtime: stats.mtime,
+        ctime: stats.ctime
+      };
+    } catch (error) {
+      throw new Error(`Failed to get file stats: ${error.message}`);
     }
   });
-}
 
-// Handle window closed
+  ipcMain.handle('app:getVersion', () => app.getVersion());
+
+  ipcMain.handle('app:getBackendUrl', () => BACKEND_URL);
+
+  // Auto-updater events
+  autoUpdater.on('checking-for-update', () => {
+    log.info('Checking for update...');
+  });
+
+  autoUpdater.on('update-available', (info) => {
+    log.info('Update available.');
+    mainWindow.webContents.send('update-available', info);
+  });
+
+  autoUpdater.on('update-not-available', (info) => {
+    log.info('Update not available.');
+  });
+
+  autoUpdater.on('error', (err) => {
+    log.error('Error in auto-updater. ' + err);
+  });
+
+  autoUpdater.on('download-progress', (progressObj) => {
+    let log_message = 'Download speed: ' + progressObj.bytesPerSecond;
+    log_message = log_message + ' - Downloaded ' + progressObj.percent + '%';
+    log_message = log_message + ' (' + progressObj.transferred + '/' + progressObj.total + ')';
+    log.info(log_message);
+    mainWindow.webContents.send('download-progress', progressObj);
+  });
+
+  autoUpdater.on('update-downloaded', (info) => {
+    log.info('Update downloaded');
+    mainWindow.webContents.send('update-downloaded', info);
+  });
+
+  createWindow();
+
+  app.on('activate', function () {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
+  });
+
+  // Check for updates
+  if (app.isPackaged) {
+    autoUpdater.checkForUpdatesAndNotify();
+  }
+});
+
+// Quit when all windows are closed, except on macOS. There, it's common
+// for applications and their menu bar to stay active until the user quits
+// explicitly with Cmd + Q.
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-// Cleanup on quit
-app.on('before-quit', async () => {
-  log.info('Application shutting down...');
-
-  // Stop worker pool
-  if (workerPool) {
-    await workerPool.shutdown();
-  }
-
-  // Stop Express server
-  if (expressServer) {
-    expressServer.close();
-  }
-});
-
-// IPC Handlers
-ipcMain.handle('compress-image', async (event, { path, settings, channel }) => {
-  try {
-    const result = await workerPool.compressImage(path, settings, (progress) => {
-      event.sender.send(`${channel}-progress`, progress);
-    });
-    return result;
-  } catch (error) {
-    log.error('Compression error:', error);
-    throw error;
-  }
-});
-
-ipcMain.on('cancel-compression', () => {
-  workerPool.cancelCurrentTask();
-});
-
-ipcMain.handle('estimate-size', async (event, { path, settings }) => {
-  return workerPool.estimateCompressedSize(path, settings);
-});
-
-// Batch operations
-ipcMain.handle('create-batch', async (event, options) => {
-  return workerPool.createBatch(options);
-});
-
-ipcMain.handle('get-history', async (event, limit) => {
-  const db = require('../backend/services/databaseService.js');
-  return db.getCompressionHistory(limit);
-});
-
-ipcMain.handle('delete-history-item', async (event, id) => {
-  const db = require('../backend/services/databaseService.js');
-  return db.deleteHistoryItem(id);
-});
-
-ipcMain.handle('clear-history', async () => {
-  const db = require('../backend/services/databaseService.js');
-  return db.clearHistory();
-});
-
-// Theme handling
-ipcMain.on('set-theme', (event, theme) => {
-  mainWindow.webContents.send('theme-changed', theme);
-});
-
-// Hardware acceleration
-ipcMain.on('set-hardware-acceleration', (event, enabled) => {
-  if (enabled) {
-    app.enableSandbox();
-  } else {
-    app.disableDomainBlockingFor3DAPIs();
-  }
-});
-
-// File dialog handlers
-ipcMain.handle('show-open-dialog', async () => {
-  const result = await dialog.showOpenDialog(mainWindow, {
-    properties: ['openFile', 'multiSelections'],
-    filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'] },
-      { name: 'All Files', extensions: ['*'] }
-    ]
-  });
-  return result;
-});
-
-ipcMain.handle('show-save-dialog', async (event, defaultPath) => {
-  const result = await dialog.showSaveDialog(mainWindow, {
-    defaultPath,
-    filters: [
-      { name: 'Images', extensions: ['jpg', 'jpeg', 'png', 'gif', 'webp'] },
-      { name: 'All Files', extensions: ['*'] }
-    ]
-  });
-  return result;
-});
-
-// Export for testing
-export { mainWindow };
+// In this file you can include the rest of your app"s specific main process
+// code. You can also put them in separate files and require them here.

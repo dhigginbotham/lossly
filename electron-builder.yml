@@ -1,0 +1,108 @@
+appId: com.lossly.app
+productName: Lossly
+directories:
+  output: dist
+  buildResources: build
+
+files:
+  - "dist/**/*"
+  - "!**/node_modules/**/*"
+  - "node_modules/**/*"
+  - "!**/*.{map,ts,tsx}"
+  - "!**/test/**/*"
+  - "!**/__tests__/**/*"
+
+extraResources:
+  - from: "public/"
+    to: "public/"
+    filter: ["**/*"]
+
+mac:
+  category: public.app-category.photography
+  icon: public/icon.icns
+  hardenedRuntime: true
+  gatekeeperAssess: false
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize:
+    teamId: "YOUR_TEAM_ID"
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: zip
+      arch:
+        - x64
+        - arm64
+
+win:
+  icon: public/icon.ico
+  publisherName: "Lossly Team"
+  target:
+    - target: nsis
+      arch:
+        - x64
+        - ia32
+    - target: portable
+      arch:
+        - x64
+
+linux:
+  icon: public/icon.png
+  category: Graphics
+  maintainer: "Lossly Team <support@lossly.app>"
+  desktop:
+    Name: Lossly
+    Comment: Beautiful Image Compression
+    Categories: Graphics;Photography;
+  target:
+    - target: AppImage
+      arch:
+        - x64
+    - target: deb
+      arch:
+        - x64
+    - target: rpm
+      arch:
+        - x64
+    - target: snap
+      arch:
+        - x64
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Lossly
+
+dmg:
+  background: build/background.png
+  icon: public/icon.icns
+  iconSize: 100
+  contents:
+    - x: 380
+      y: 240
+      type: link
+      path: /Applications
+    - x: 122
+      y: 240
+      type: file
+
+appImage:
+  synopsis: Beautiful Image Compression
+  description: |
+    Lossly is a powerful image compression application with real-time preview,
+    batch processing, and support for multiple formats.
+
+publish:
+  - provider: github
+    owner: yourusername
+    repo: lossly
+    vPrefixedTagName: true
+    releaseType: release
+
+compression: maximum

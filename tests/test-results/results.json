@@ -1,0 +1,934 @@
+{
+  "config": {
+    "configFile": "C:\\code\\lossly\\tests\\e2e\\playwright.config.ts",
+    "rootDir": "C:/code/lossly/tests/e2e/specs",
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\code\\lossly\\tests\\e2e\\fixtures\\global-setup.ts",
+    "globalTeardown": "C:\\code\\lossly\\tests\\e2e\\fixtures\\global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "../test-results/html"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "../test-results/results.json"
+        }
+      ],
+      [
+        "list",
+        null
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/code/lossly/tests/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "electron",
+        "name": "electron",
+        "testDir": "C:/code/lossly/tests/e2e/specs",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.53.2",
+    "workers": 1,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "01-single-upload.spec.ts",
+      "file": "01-single-upload.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Single Image Upload & Compression",
+          "file": "01-single-upload.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should upload image via drag and drop",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 4720,
+                      "error": {
+                        "message": "Error: electron.launch: Process failed to launch!",
+                        "stack": "Error: electron.launch: Process failed to launch!\n    at Object.electronApp (C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts:13:25)",
+                        "location": {
+                          "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                          "column": 25,
+                          "line": 13
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\fixtures\\electron-app.ts:13\n\n\u001b[0m \u001b[90m 11 |\u001b[39m   electronApp\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({ }\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 12 |\u001b[39m     \u001b[90m// Launch Electron app\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 13 |\u001b[39m     \u001b[36mconst\u001b[39m electronApp \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m electron\u001b[33m.\u001b[39mlaunch({\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 14 |\u001b[39m       args\u001b[33m:\u001b[39m [path\u001b[33m.\u001b[39mjoin(__dirname\u001b[33m,\u001b[39m \u001b[32m'../../../'\u001b[39m)]\u001b[33m,\u001b[39m\n \u001b[90m 15 |\u001b[39m       env\u001b[33m:\u001b[39m {\n \u001b[90m 16 |\u001b[39m         \u001b[33m...\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                            "column": 25,
+                            "line": 13
+                          },
+                          "message": "Error: electron.launch: Process failed to launch!\n\n\u001b[90m   at \u001b[39m..\\fixtures\\electron-app.ts:13\n\n\u001b[0m \u001b[90m 11 |\u001b[39m   electronApp\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({ }\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 12 |\u001b[39m     \u001b[90m// Launch Electron app\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 13 |\u001b[39m     \u001b[36mconst\u001b[39m electronApp \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m electron\u001b[33m.\u001b[39mlaunch({\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 14 |\u001b[39m       args\u001b[33m:\u001b[39m [path\u001b[33m.\u001b[39mjoin(__dirname\u001b[33m,\u001b[39m \u001b[32m'../../../'\u001b[39m)]\u001b[33m,\u001b[39m\n \u001b[90m 15 |\u001b[39m       env\u001b[33m:\u001b[39m {\n \u001b[90m 16 |\u001b[39m         \u001b[33m...\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at Object.electronApp (C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts:13:25)\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T15:25:49.088Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                        "column": 25,
+                        "line": 13
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ada91d758a3cff993733-ba179813516fcca62eb9",
+              "file": "01-single-upload.spec.ts",
+              "line": 13,
+              "column": 7
+            },
+            {
+              "title": "should upload image via file dialog",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [
+                    {
+                      "workerIndex": 1,
+                      "parallelIndex": 0,
+                      "status": "failed",
+                      "duration": 2891,
+                      "error": {
+                        "message": "Error: electron.launch: Process failed to launch!",
+                        "stack": "Error: electron.launch: Process failed to launch!\n    at Object.electronApp (C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts:13:25)",
+                        "location": {
+                          "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                          "column": 25,
+                          "line": 13
+                        },
+                        "snippet": "\u001b[90m   at \u001b[39m..\\fixtures\\electron-app.ts:13\n\n\u001b[0m \u001b[90m 11 |\u001b[39m   electronApp\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({ }\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 12 |\u001b[39m     \u001b[90m// Launch Electron app\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 13 |\u001b[39m     \u001b[36mconst\u001b[39m electronApp \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m electron\u001b[33m.\u001b[39mlaunch({\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 14 |\u001b[39m       args\u001b[33m:\u001b[39m [path\u001b[33m.\u001b[39mjoin(__dirname\u001b[33m,\u001b[39m \u001b[32m'../../../'\u001b[39m)]\u001b[33m,\u001b[39m\n \u001b[90m 15 |\u001b[39m       env\u001b[33m:\u001b[39m {\n \u001b[90m 16 |\u001b[39m         \u001b[33m...\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m,\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                            "column": 25,
+                            "line": 13
+                          },
+                          "message": "Error: electron.launch: Process failed to launch!\n\n\u001b[90m   at \u001b[39m..\\fixtures\\electron-app.ts:13\n\n\u001b[0m \u001b[90m 11 |\u001b[39m   electronApp\u001b[33m:\u001b[39m \u001b[36masync\u001b[39m ({ }\u001b[33m,\u001b[39m use) \u001b[33m=>\u001b[39m {\n \u001b[90m 12 |\u001b[39m     \u001b[90m// Launch Electron app\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 13 |\u001b[39m     \u001b[36mconst\u001b[39m electronApp \u001b[33m=\u001b[39m \u001b[36mawait\u001b[39m electron\u001b[33m.\u001b[39mlaunch({\n \u001b[90m    |\u001b[39m                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 14 |\u001b[39m       args\u001b[33m:\u001b[39m [path\u001b[33m.\u001b[39mjoin(__dirname\u001b[33m,\u001b[39m \u001b[32m'../../../'\u001b[39m)]\u001b[33m,\u001b[39m\n \u001b[90m 15 |\u001b[39m       env\u001b[33m:\u001b[39m {\n \u001b[90m 16 |\u001b[39m         \u001b[33m...\u001b[39mprocess\u001b[33m.\u001b[39menv\u001b[33m,\u001b[39m\u001b[0m\n\u001b[2m    at Object.electronApp (C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts:13:25)\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T15:25:54.456Z",
+                      "annotations": [],
+                      "attachments": [],
+                      "errorLocation": {
+                        "file": "C:\\code\\lossly\\tests\\e2e\\fixtures\\electron-app.ts",
+                        "column": 25,
+                        "line": 13
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "ada91d758a3cff993733-1625760a9cf1ec104bbb",
+              "file": "01-single-upload.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "should display compression settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [
+                    {
+                      "workerIndex": 2,
+                      "parallelIndex": 0,
+                      "status": "skipped",
+                      "duration": 0,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-07-01T15:25:57.976Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-25b74d883ab859000cd6",
+              "file": "01-single-upload.spec.ts",
+              "line": 54,
+              "column": 7
+            },
+            {
+              "title": "should compress image and show results",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-6475291dd673042cf9b3",
+              "file": "01-single-upload.spec.ts",
+              "line": 75,
+              "column": 7
+            },
+            {
+              "title": "should allow adjusting compression settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-28de2d63f1397b0de5dc",
+              "file": "01-single-upload.spec.ts",
+              "line": 108,
+              "column": 7
+            },
+            {
+              "title": "should save compressed image",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-d9ab01cfe5ee53eae555",
+              "file": "01-single-upload.spec.ts",
+              "line": 142,
+              "column": 7
+            },
+            {
+              "title": "should show before/after comparison slider",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-c3331a3a140f44749142",
+              "file": "01-single-upload.spec.ts",
+              "line": 179,
+              "column": 7
+            },
+            {
+              "title": "should handle invalid file types",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-cf0eb6df803d36aca981",
+              "file": "01-single-upload.spec.ts",
+              "line": 218,
+              "column": 7
+            },
+            {
+              "title": "should reset when clicking new image",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "ada91d758a3cff993733-4166a6ab87240425955e",
+              "file": "01-single-upload.spec.ts",
+              "line": 235,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "02-batch-processing.spec.ts",
+      "file": "02-batch-processing.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Batch Processing",
+          "file": "02-batch-processing.spec.ts",
+          "line": 5,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should upload multiple files via drag and drop",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-e4a8981bf33c233847ca",
+              "file": "02-batch-processing.spec.ts",
+              "line": 19,
+              "column": 7
+            },
+            {
+              "title": "should upload files via Choose Images button",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-36b450f783c49b29981d",
+              "file": "02-batch-processing.spec.ts",
+              "line": 37,
+              "column": 7
+            },
+            {
+              "title": "should display correct file sizes (not 0 Bytes)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-109141ed73a0177518a5",
+              "file": "02-batch-processing.spec.ts",
+              "line": 59,
+              "column": 7
+            },
+            {
+              "title": "should show image thumbnails",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-e0ac8c2723636aa0202a",
+              "file": "02-batch-processing.spec.ts",
+              "line": 87,
+              "column": 7
+            },
+            {
+              "title": "should process all files completely (5/5 not 4/5)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-39d010255d37030ed7ab",
+              "file": "02-batch-processing.spec.ts",
+              "line": 115,
+              "column": 7
+            },
+            {
+              "title": "should show real-time progress updates",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-879c34915cc4ee93b40f",
+              "file": "02-batch-processing.spec.ts",
+              "line": 154,
+              "column": 7
+            },
+            {
+              "title": "should allow preview of individual images",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-c5c95fc95181ab2c7ea7",
+              "file": "02-batch-processing.spec.ts",
+              "line": 190,
+              "column": 7
+            },
+            {
+              "title": "should handle errors gracefully",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-6730123437a07750db46",
+              "file": "02-batch-processing.spec.ts",
+              "line": 223,
+              "column": 7
+            },
+            {
+              "title": "should not show NaN or undefined anywhere",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "3f3f25adde0d09d882a8-38c9286ebcf4ec39f1cb",
+              "file": "02-batch-processing.spec.ts",
+              "line": 240,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03-presets.spec.ts",
+      "file": "03-presets.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Presets",
+          "file": "03-presets.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should show preset options in compression settings",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-160e1a88f2e5d85c017a",
+              "file": "03-presets.spec.ts",
+              "line": 18,
+              "column": 7
+            },
+            {
+              "title": "should create custom preset",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-d1d22b770f6b92e984c4",
+              "file": "03-presets.spec.ts",
+              "line": 34,
+              "column": 7
+            },
+            {
+              "title": "should load saved preset",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-85ceb419341fa3d9d253",
+              "file": "03-presets.spec.ts",
+              "line": 66,
+              "column": 7
+            },
+            {
+              "title": "should apply preset to compression",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-bab0bfd1c7f19b393784",
+              "file": "03-presets.spec.ts",
+              "line": 104,
+              "column": 7
+            },
+            {
+              "title": "should delete custom preset",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-1e83ea04000bcc25163f",
+              "file": "03-presets.spec.ts",
+              "line": 137,
+              "column": 7
+            },
+            {
+              "title": "should have default presets available",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-bb4c7eaf968ec0f6b4d7",
+              "file": "03-presets.spec.ts",
+              "line": 187,
+              "column": 7
+            },
+            {
+              "title": "should persist presets across sessions",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-158a2db6d446685d4052",
+              "file": "03-presets.spec.ts",
+              "line": 209,
+              "column": 7
+            },
+            {
+              "title": "should show preset details on hover/focus",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "cbde66122a136398b725-9212df4799f3ffdbecef",
+              "file": "03-presets.spec.ts",
+              "line": 238,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "04-history.spec.ts",
+      "file": "04-history.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "History",
+          "file": "04-history.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "should display compression history entries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-5b1e8bbf0d0c4d7afc87",
+              "file": "04-history.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "should display correct file sizes (not NaN undefined)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-ed8e7b7776ea4adc22dd",
+              "file": "04-history.spec.ts",
+              "line": 49,
+              "column": 7
+            },
+            {
+              "title": "should show compression statistics",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-39cf1b857e525cdc96a9",
+              "file": "04-history.spec.ts",
+              "line": 77,
+              "column": 7
+            },
+            {
+              "title": "should show history item details on click",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-5400bcd2eee0e6aaa2de",
+              "file": "04-history.spec.ts",
+              "line": 94,
+              "column": 7
+            },
+            {
+              "title": "should delete individual history items",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-b3d0f82ef6d172760a18",
+              "file": "04-history.spec.ts",
+              "line": 132,
+              "column": 7
+            },
+            {
+              "title": "should clear all history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-9920b3f61041fcf8b02b",
+              "file": "04-history.spec.ts",
+              "line": 162,
+              "column": 7
+            },
+            {
+              "title": "should persist history after navigation",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-d7940cd64f53b86b3503",
+              "file": "04-history.spec.ts",
+              "line": 193,
+              "column": 7
+            },
+            {
+              "title": "should show batch compression entries",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-b85a459d54090a095624",
+              "file": "04-history.spec.ts",
+              "line": 212,
+              "column": 7
+            },
+            {
+              "title": "should filter or search history",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "electron",
+                  "projectName": "electron",
+                  "results": [],
+                  "status": "skipped"
+                }
+              ],
+              "id": "158503f54d5fe5d4d9d4-fd8db6b7ec73de0c43a9",
+              "file": "04-history.spec.ts",
+              "line": 240,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-07-01T15:25:48.422Z",
+    "duration": 11003.407,
+    "expected": 0,
+    "skipped": 33,
+    "unexpected": 2,
+    "flaky": 0
+  }
+}

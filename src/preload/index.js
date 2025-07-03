@@ -1,103 +1,145 @@
-import { contextBridge, ipcRenderer } from 'electron';
+const { contextBridge, ipcRenderer } = require('electron');
 
-// Type-safe IPC bridge
-contextBridge.exposeInMainWorld('electron', {
-  // Image operations
-  compressImage: (path, settings, onProgress) => {
-    const channel = `compress-${Date.now()}`;
-
-    if (onProgress) {
-      const progressHandler = (_, progress) => onProgress(progress);
-      ipcRenderer.on(`${channel}-progress`, progressHandler);
-
-      // Cleanup listener after completion
-      ipcRenderer.once(`${channel}-complete`, () => {
-        ipcRenderer.removeListener(`${channel}-progress`, progressHandler);
+// API exposed to renderer
+contextBridge.exposeInMainWorld('api', {
+  // Compression API
+  compression: {
+    compress: async (options) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/compression/compress`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options)
       });
+      return response.json();
+    },
+
+    saveAs: async (options) => {
+      const targetPath = await ipcRenderer.invoke('dialog:saveFile', options.defaultName);
+      if (!targetPath) return { success: false, cancelled: true };
+
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/compression/save-as`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          sourcePath: options.sourcePath,
+          targetPath
+        })
+      });
+      return response.json();
+    },
+
+    getFileStats: async (filePath) => {
+      return ipcRenderer.invoke('file:getStats', filePath);
     }
-
-    return ipcRenderer.invoke('compress-image', { path, settings, channel });
   },
 
-  cancelCompression: () => ipcRenderer.send('cancel-compression'),
+  // Batch API
+  batch: {
+    create: async (options) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/create`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options)
+      });
+      return response.json();
+    },
 
-  estimateCompressedSize: (path, settings) =>
-    ipcRenderer.invoke('estimate-size', { path, settings }),
+    startBatch: async (options) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/start`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options)
+      });
+      return response.json();
+    },
 
-  // Batch operations
-  createBatch: (options) =>
-    ipcRenderer.invoke('create-batch', options),
+    pause: async (batchId) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/${batchId}/pause`, {
+        method: 'POST'
+      });
+      return response.json();
+    },
 
-  pauseBatch: (batchId) =>
-    ipcRenderer.send('pause-batch', batchId),
+    resume: async (batchId) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/${batchId}/resume`, {
+        method: 'POST'
+      });
+      return response.json();
+    },
 
-  resumeBatch: (batchId) =>
-    ipcRenderer.send('resume-batch', batchId),
-
-  cancelBatch: (batchId) =>
-    ipcRenderer.send('cancel-batch', batchId),
-
-  onBatchProgress: (batchId, callback) => {
-    const handler = (_, progress) => callback(progress);
-    ipcRenderer.on(`batch-progress-${batchId}`, handler);
-
-    // Return cleanup function
-    return () => {
-      ipcRenderer.removeListener(`batch-progress-${batchId}`, handler);
-    };
+    cancel: async (batchId) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/${batchId}/cancel`, {
+        method: 'POST'
+      });
+      return response.json();
+    }
   },
 
-  onFileComplete: (batchId, callback) => {
-    const handler = (_, result) => callback(result);
-    ipcRenderer.on(`file-complete-${batchId}`, handler);
+  // History API
+  history: {
+    get: async (options = {}) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const queryParams = new URLSearchParams(options).toString();
+      const response = await fetch(`${backendUrl}/api/history?${queryParams}`);
+      return response.json();
+    },
 
-    // Return cleanup function
-    return () => {
-      ipcRenderer.removeListener(`file-complete-${batchId}`, handler);
-    };
+    delete: async (id) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/history/${id}`, {
+        method: 'DELETE'
+      });
+      return response.json();
+    },
+
+    clear: async () => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/history`, {
+        method: 'DELETE'
+      });
+      return response.json();
+    }
   },
 
-  onBatchComplete: (batchId, callback) => {
-    ipcRenderer.once(`batch-complete-${batchId}`, (_, summary) => callback(summary));
+  // Settings API
+  settings: {
+    get: async () => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/settings`);
+      return response.json();
+    },
+
+    save: async (settings) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/settings`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(settings)
+      });
+      return response.json();
+    }
   },
-
-  // History operations
-  getCompressionHistory: (limit) =>
-    ipcRenderer.invoke('get-history', limit),
-
-  deleteHistoryItem: (id) =>
-    ipcRenderer.invoke('delete-history-item', id),
-
-  clearHistory: () =>
-    ipcRenderer.invoke('clear-history'),
-
-  // Settings
-  setTheme: (theme) =>
-    ipcRenderer.send('set-theme', theme),
-
-  setHardwareAcceleration: (enabled) =>
-    ipcRenderer.send('set-hardware-acceleration', enabled),
 
   // File dialogs
-  showOpenDialog: () =>
-    ipcRenderer.invoke('show-open-dialog'),
-
-  showSaveDialog: (defaultPath) =>
-    ipcRenderer.invoke('show-save-dialog', defaultPath),
-
-  // System events
-  onThemeChanged: (callback) => {
-    ipcRenderer.on('theme-changed', (_, theme) => callback(theme));
+  dialog: {
+    openFile: () => ipcRenderer.invoke('dialog:openFile'),
+    saveFile: (defaultName) => ipcRenderer.invoke('dialog:saveFile', defaultName),
+    showOpenDialog: (options) => ipcRenderer.invoke('dialog:showOpenDialog', options)
   },
 
-  onStoreUpdate: (callback) => {
-    ipcRenderer.on('store-update', (_, update) => callback(update));
-  },
-
-  // Platform info
-  platform: process.platform,
-  arch: process.arch,
-  version: process.versions.electron
+  // App info
+  app: {
+    getVersion: () => ipcRenderer.invoke('app:getVersion'),
+    getBackendUrl: () => ipcRenderer.invoke('app:getBackendUrl'),
+    platform: process.platform
+  }
 });
 
 // Expose versions

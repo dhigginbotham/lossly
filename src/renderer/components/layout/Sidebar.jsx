@@ -27,7 +27,7 @@ import { useBatchStore } from '../../stores/batchStore';
 
 export function Sidebar () {
   const { activeView, setActiveView, sidebarCollapsed, toggleSidebar } = useAppStore();
-  const { queue } = useBatchStore();
+  const { batchItems } = useBatchStore();
   const { colorMode, toggleColorMode } = useColorMode();
 
   const bgColor = useColorModeValue('white', 'surface.700');
@@ -35,7 +35,7 @@ export function Sidebar () {
   const hoverBg = useColorModeValue('surface.100', 'surface.600');
   const activeColor = 'brand.400';
 
-  const pendingBatchCount = queue.filter(item => item.status === 'pending').length;
+  const pendingBatchCount = batchItems && batchItems.filter(item => item.status === 'pending').length || 0;
 
   const menuItems = [
     {

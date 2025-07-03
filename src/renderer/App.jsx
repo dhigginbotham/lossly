@@ -37,7 +37,9 @@ function App () {
 
   // Add platform class to body
   useEffect(() => {
-    document.body.classList.add(`platform-${window.electron.platform}`);
+    if (window.api && window.api.app && window.api.app.platform) {
+      document.body.classList.add(`platform-${window.api.app.platform}`);
+    }
   }, []);
 
   return (
