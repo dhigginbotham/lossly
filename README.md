@@ -161,25 +161,14 @@ npm run lint             # Run ESLint
 
 ## 📸 Screenshots
 
-### Main Compression View
-![Main Compression Interface](docs/screenshots/compression-view.png)
-*Real-time side-by-side comparison with draggable divider and compression settings*
+> **Note**: Screenshots are currently being captured and will be added soon to showcase the new v1.1.0 features including the enhanced batch processing, smart presets system, and advanced history management.
 
-### Batch Processing Dashboard
-![Batch Processing](docs/screenshots/batch-processing.png)
-*Process multiple images with real-time progress tracking and thumbnails*
-
-### Smart Presets System
-![Presets Management](docs/screenshots/presets-system.png)
-*Built-in and custom presets for different use cases and workflows*
-
-### Advanced History & Analytics
-![History View](docs/screenshots/history-analytics.png)
-*Comprehensive history tracking with search, filtering, and statistics*
-
-### Settings & Configuration
-![Settings Panel](docs/screenshots/settings-panel.png)
-*Fine-tune compression parameters and application preferences*
+**Planned Screenshots:**
+- **Main Compression View** - Real-time side-by-side comparison with draggable divider
+- **Batch Processing Dashboard** - Multi-image processing with progress tracking
+- **Smart Presets System** - Built-in and custom presets management
+- **Advanced History & Analytics** - Comprehensive tracking with search and filtering
+- **Settings & Configuration** - Fine-tuned compression parameters
 
 ## 📸 Application Views
 
