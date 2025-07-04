@@ -59,7 +59,7 @@ contextBridge.exposeInMainWorld('api', {
 
     pause: async (batchId) => {
       const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
-      const response = await fetch(`${backendUrl}/api/batch/${batchId}/pause`, {
+      const response = await fetch(`${backendUrl}/api/batch/pause/${batchId}`, {
         method: 'POST'
       });
       return response.json();
@@ -67,7 +67,7 @@ contextBridge.exposeInMainWorld('api', {
 
     resume: async (batchId) => {
       const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
-      const response = await fetch(`${backendUrl}/api/batch/${batchId}/resume`, {
+      const response = await fetch(`${backendUrl}/api/batch/resume/${batchId}`, {
         method: 'POST'
       });
       return response.json();
@@ -75,8 +75,18 @@ contextBridge.exposeInMainWorld('api', {
 
     cancel: async (batchId) => {
       const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
-      const response = await fetch(`${backendUrl}/api/batch/${batchId}/cancel`, {
+      const response = await fetch(`${backendUrl}/api/batch/cancel/${batchId}`, {
         method: 'POST'
+      });
+      return response.json();
+    },
+
+    downloadAll: async (options) => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/batch/download-all`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(options)
       });
       return response.json();
     }
@@ -103,6 +113,14 @@ contextBridge.exposeInMainWorld('api', {
       const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
       const response = await fetch(`${backendUrl}/api/history`, {
         method: 'DELETE'
+      });
+      return response.json();
+    },
+
+    fixCorrupted: async () => {
+      const backendUrl = await ipcRenderer.invoke('app:getBackendUrl');
+      const response = await fetch(`${backendUrl}/api/history/fix-corrupted`, {
+        method: 'POST'
       });
       return response.json();
     }
@@ -139,6 +157,12 @@ contextBridge.exposeInMainWorld('api', {
     getVersion: () => ipcRenderer.invoke('app:getVersion'),
     getBackendUrl: () => ipcRenderer.invoke('app:getBackendUrl'),
     platform: process.platform
+  },
+
+  // Shell operations
+  shell: {
+    openPath: (path) => ipcRenderer.invoke('shell:openPath', path),
+    showItemInFolder: (path) => ipcRenderer.invoke('shell:showItemInFolder', path)
   }
 });
 

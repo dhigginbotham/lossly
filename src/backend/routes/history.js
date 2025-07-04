@@ -190,6 +190,40 @@ router.post('/clean', async (req, res) => {
   }
 });
 
+// Fix corrupted history data
+router.post('/fix-corrupted', async (req, res) => {
+  try {
+    // Delete all history items with invalid data
+    const deleteCorruptedSql = `
+      DELETE FROM history
+      WHERE original_size IS NULL
+      OR original_size = 'NaN'
+      OR compressed_size IS NULL
+      OR compressed_size = 'NaN'
+      OR output_size IS NULL
+      OR output_size = 'NaN'
+      OR original_name IS NULL
+      OR original_name = ''
+    `;
+
+    const result = await databaseService.run(deleteCorruptedSql);
+
+    res.json({
+      success: true,
+      data: {
+        message: 'Removed corrupted history items',
+        deletedCount: result.changes,
+      },
+    });
+  } catch (error) {
+    console.error('History fix error:', error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
+
 // Export history data
 router.get('/export/:format', async (req, res) => {
   try {

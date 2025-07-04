@@ -30,21 +30,21 @@ router.post('/compress', async (req, res) => {
     // Compress image using worker pool
     const result = await workerPool.compress(imagePath, settings);
 
-    // Add to history with correct property names
+    // Add to history with correct property names and validation
     await databaseService.addHistoryItem({
       id: Date.now().toString(),
       originalName: path.basename(result.originalPath || imagePath),
-      originalPath: result.originalPath,
-      originalSize: result.originalSize,
-      originalFormat: result.originalFormat,
-      outputName: result.outputName,
-      outputPath: result.outputPath,
-      outputSize: result.outputSize,
-      outputFormat: result.outputFormat,
-      compressedSize: result.compressedSize,
-      savedBytes: result.savedBytes,
-      reductionPercentage: result.reductionPercentage,
-      processingTime: result.processingTime,
+      originalPath: result.originalPath || imagePath,
+      originalSize: Number(result.originalSize) || 0,
+      originalFormat: result.originalFormat || 'unknown',
+      outputName: result.outputName || '',
+      outputPath: result.outputPath || '',
+      outputSize: Number(result.outputSize) || Number(result.compressedSize) || 0,
+      outputFormat: result.outputFormat || result.originalFormat || 'unknown',
+      compressedSize: Number(result.compressedSize) || Number(result.outputSize) || 0,
+      savedBytes: Number(result.savedBytes) || 0,
+      reductionPercentage: Number(result.reductionPercentage) || 0,
+      processingTime: Number(result.processingTime) || 0,
       settings,
       type: 'compression',
       timestamp: new Date().toISOString()

@@ -1,6 +1,6 @@
 {
   "name": "lossly",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Beautiful image compression with real-time preview",
   "main": "dist/main/index.js",
   "author": "Lossly Team",

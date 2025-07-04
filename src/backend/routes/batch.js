@@ -113,21 +113,21 @@ async function processBatch (batchId, items) {
         progress: 100,
       });
 
-      // Add to history with correct property names
+      // Add to history with correct property names and validation
       await databaseService.addHistoryItem({
         id: Date.now().toString() + '-' + itemId,
-        originalName: path.basename(result.originalPath || ''),
-        originalPath: result.originalPath,
-        originalSize: result.originalSize,
-        originalFormat: result.originalFormat,
-        outputName: result.outputName,
-        outputPath: result.outputPath,
-        outputSize: result.outputSize,
-        outputFormat: result.outputFormat,
-        compressedSize: result.compressedSize,
-        savedBytes: result.savedBytes,
-        reductionPercentage: result.reductionPercentage,
-        processingTime: result.processingTime,
+        originalName: path.basename(result.originalPath || 'unknown'),
+        originalPath: result.originalPath || '',
+        originalSize: Number(result.originalSize) || 0,
+        originalFormat: result.originalFormat || 'unknown',
+        outputName: result.outputName || '',
+        outputPath: result.outputPath || '',
+        outputSize: Number(result.outputSize) || Number(result.compressedSize) || 0,
+        outputFormat: result.outputFormat || result.originalFormat || 'unknown',
+        compressedSize: Number(result.compressedSize) || Number(result.outputSize) || 0,
+        savedBytes: Number(result.savedBytes) || 0,
+        reductionPercentage: Number(result.reductionPercentage) || 0,
+        processingTime: Number(result.processingTime) || 0,
         batchId,
         type: 'batch-compression',
         timestamp: new Date().toISOString()
@@ -181,12 +181,16 @@ async function processBatch (batchId, items) {
     await databaseService.updateBatchJob(batchId, {
       status: 'completed',
       completed_at: new Date().toISOString(),
+      completed_items: completed,
+      failed_items: failed,
+      total_saved: totalSaved,
     });
 
     batch.emitter.emit('complete', {
       batchId,
       completed,
       failed,
+      total: items.length,
       totalSaved,
     });
   } catch (error) {

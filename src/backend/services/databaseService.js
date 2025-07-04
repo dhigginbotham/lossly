@@ -163,6 +163,12 @@ class DatabaseService {
 
   // History methods
   async addHistoryItem (item) {
+    // Validate and sanitize data to prevent NaN/undefined values
+    const validateNumber = (value, defaultValue = 0) => {
+      const num = Number(value);
+      return isNaN(num) || !isFinite(num) ? defaultValue : num;
+    };
+
     const sql = `
       INSERT INTO history (
         id, original_name, original_path, original_size, original_format,
@@ -174,18 +180,18 @@ class DatabaseService {
 
     const params = [
       item.id || Date.now().toString(),
-      item.originalName,
-      item.originalPath,
-      item.originalSize,
-      item.originalFormat,
-      item.outputName,
-      item.outputPath,
-      item.outputSize,
-      item.outputFormat,
-      item.compressedSize,
-      item.savedBytes,
-      item.reductionPercentage,
-      item.processingTime,
+      item.originalName || 'unknown',
+      item.originalPath || '',
+      validateNumber(item.originalSize, 0),
+      item.originalFormat || 'unknown',
+      item.outputName || '',
+      item.outputPath || '',
+      validateNumber(item.outputSize, 0),
+      item.outputFormat || 'unknown',
+      validateNumber(item.compressedSize, 0),
+      validateNumber(item.savedBytes, 0),
+      validateNumber(item.reductionPercentage, 0),
+      validateNumber(item.processingTime, 0),
       item.type || 'compression',
       JSON.stringify(item.settings || {}),
       item.timestamp || new Date().toISOString(),
@@ -202,7 +208,21 @@ class DatabaseService {
     `;
     const rows = await this.all(sql, [limit, offset]);
     return rows.map((row) => ({
-      ...row,
+      id: row.id,
+      originalName: row.original_name,
+      originalPath: row.original_path,
+      originalSize: row.original_size || 0,
+      originalFormat: row.original_format,
+      outputName: row.output_name,
+      outputPath: row.output_path,
+      outputSize: row.output_size || 0,
+      outputFormat: row.output_format,
+      compressedSize: row.compressed_size || row.output_size || 0,
+      savedBytes: row.saved_bytes || 0,
+      reductionPercentage: row.reduction_percentage || 0,
+      processingTime: row.processing_time || 0,
+      type: row.type,
+      timestamp: row.timestamp,
       settings: row.settings ? JSON.parse(row.settings) : null,
     }));
   }

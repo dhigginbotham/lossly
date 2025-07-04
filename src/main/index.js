@@ -135,6 +135,27 @@ app.whenReady().then(() => {
 
   ipcMain.handle('app:getBackendUrl', () => BACKEND_URL);
 
+  // Shell operations
+  ipcMain.handle('shell:openPath', async (event, filePath) => {
+    try {
+      const result = await shell.openPath(filePath);
+      return { success: true, result };
+    } catch (error) {
+      console.error('Failed to open path:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
+  ipcMain.handle('shell:showItemInFolder', async (event, filePath) => {
+    try {
+      shell.showItemInFolder(filePath);
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to show item in folder:', error);
+      return { success: false, error: error.message };
+    }
+  });
+
   // Auto-updater events
   autoUpdater.on('checking-for-update', () => {
     log.info('Checking for update...');

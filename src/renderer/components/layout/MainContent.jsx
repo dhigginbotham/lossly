@@ -5,6 +5,7 @@ import CompressionView from '../views/CompressionView';
 import BatchView from '../views/BatchView';
 import ConversionView from '../views/ConversionView';
 import HistoryView from '../views/HistoryView';
+import PresetsView from '../views/PresetsView';
 import SettingsView from '../views/SettingsView';
 
 export function MainContent () {
@@ -21,6 +22,8 @@ export function MainContent () {
         return <ConversionView />;
       case 'history':
         return <HistoryView />;
+      case 'presets':
+        return <PresetsView />;
       case 'settings':
         return <SettingsView />;
       default:

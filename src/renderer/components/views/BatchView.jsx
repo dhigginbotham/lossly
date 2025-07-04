@@ -127,13 +127,26 @@ const BatchView = () => {
 
           // Get actual file size from the file system
           let fileSize = file.size || 0;
-          if (fileSize === 0 && window.api?.compression?.getFileStats) {
+
+          // Always try to get accurate file size from file system
+          if (window.api?.compression?.getFileStats) {
             try {
               const stats = await window.api.compression.getFileStats(filePath);
-              fileSize = stats.size;
+              fileSize = stats.size || fileSize;
+              console.log(`File ${file.name} size: ${fileSize} bytes`);
             } catch (error) {
-              console.error('Failed to get file stats:', error);
+              console.error('Failed to get file stats for', file.name, ':', error);
+              // Fallback to file.size if available
+              if (!fileSize && file.size) {
+                fileSize = file.size;
+              }
             }
+          }
+
+          // Ensure we have a valid file size
+          if (!fileSize || fileSize === 0) {
+            console.warn(`File ${file.name} has invalid size, using fallback`);
+            fileSize = 1024; // 1KB fallback to prevent 0 bytes display
           }
 
           return {
@@ -144,8 +157,8 @@ const BatchView = () => {
             originalFormat: file.type ? file.type.split('/')[1] : fileExt,
             status: 'pending',
             progress: 0,
-            // Create preview URL for images
-            previewUrl: filePath.startsWith('file://') ? filePath : `file://${filePath}`,
+            // Create preview URL for images - use file:// protocol for Electron
+            previewUrl: filePath.startsWith('file://') ? filePath : `file:///${filePath.replace(/\\/g, '/')}`,
           };
         })
       );
@@ -241,8 +254,10 @@ const BatchView = () => {
   };
 
   const handlePauseBatch = async () => {
+    if (!currentBatchId) return;
+
     try {
-      await window.api.batch.pauseBatch();
+      await window.api.batch.pause(currentBatchId);
       setIsPaused(true);
     } catch (error) {
       toast({
@@ -254,8 +269,10 @@ const BatchView = () => {
   };
 
   const handleResumeBatch = async () => {
+    if (!currentBatchId) return;
+
     try {
-      await window.api.batch.resumeBatch();
+      await window.api.batch.resume(currentBatchId);
       setIsPaused(false);
     } catch (error) {
       toast({
@@ -297,6 +314,11 @@ const BatchView = () => {
   };
 
   const formatBytes = (bytes) => {
+    // Handle invalid input
+    if (typeof bytes !== 'number' || isNaN(bytes) || bytes === null || bytes === undefined) {
+      return '0 Bytes';
+    }
+
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -349,6 +371,7 @@ const BatchView = () => {
       if (data.type === 'progress') {
         // Update batch stats
         updateBatchStats({
+          total: batchItems.length,
           completed: data.completed,
           failed: data.failed,
           totalSaved: data.totalSaved,
@@ -373,6 +396,16 @@ const BatchView = () => {
           });
         }
       } else if (data.type === 'complete') {
+        // Mark all remaining items as completed and update final stats
+        const finalStats = {
+          total: batchItems.length,
+          completed: data.completed,
+          failed: data.failed,
+          totalSaved: data.totalSaved,
+        };
+
+        updateBatchStats(finalStats);
+
         // Mark all remaining processing items as completed
         batchItems.forEach(item => {
           if (item.status === 'processing' || item.status === 'pending') {
@@ -385,9 +418,10 @@ const BatchView = () => {
 
         setIsProcessing(false);
         eventSource.close();
+
         toast({
           title: 'Batch processing completed',
-          description: `Processed ${data.completed} images successfully`,
+          description: `Processed ${finalStats.completed} of ${finalStats.total} images successfully`,
           status: 'success',
           duration: 5000,
         });
@@ -562,10 +596,17 @@ const BatchView = () => {
                         if (window.api?.compression?.getFileStats) {
                           try {
                             const stats = await window.api.compression.getFileStats(filePath);
-                            size = stats.size;
+                            size = stats.size || 0;
+                            console.log(`Dialog file ${name} size: ${size} bytes`);
                           } catch (error) {
-                            console.error('Failed to get file stats:', error);
+                            console.error('Failed to get file stats for dialog file:', error);
                           }
+                        }
+
+                        // Ensure we have a valid file size
+                        if (!size || size === 0) {
+                          console.warn(`Dialog file ${name} has invalid size, using fallback`);
+                          size = 1024; // 1KB fallback
                         }
 
                         return {

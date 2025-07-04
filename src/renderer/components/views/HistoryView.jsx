@@ -77,6 +77,11 @@ const HistoryView = () => {
   }, [loadHistory]);
 
   const formatBytes = (bytes) => {
+    // Handle invalid input
+    if (typeof bytes !== 'number' || isNaN(bytes) || bytes === null || bytes === undefined) {
+      return '0 Bytes';
+    }
+
     if (bytes === 0) return '0 Bytes';
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
@@ -162,6 +167,68 @@ const HistoryView = () => {
       status: 'success',
       duration: 2000,
     });
+  };
+
+  const handleOpenImage = async (item) => {
+    try {
+      // Open the compressed image if available, otherwise open the original
+      const imagePath = item.outputPath || item.originalPath;
+      if (imagePath) {
+        // Use Electron's shell.openPath to open with default system application
+        const result = await window.api.shell?.openPath?.(imagePath);
+
+        if (result && !result.success) {
+          // Fallback: try to open in a new window
+          window.open(`file://${imagePath}`, '_blank');
+        }
+      } else {
+        toast({
+          title: 'Image not found',
+          description: 'The image file path is not available',
+          status: 'error',
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Failed to open image',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+      });
+    }
+  };
+
+  const handleShowInFolder = async (item) => {
+    try {
+      const imagePath = item.outputPath || item.originalPath;
+      if (imagePath) {
+        const result = await window.api.shell?.showItemInFolder?.(imagePath);
+
+        if (result && !result.success) {
+          toast({
+            title: 'Failed to show in folder',
+            description: result.error || 'Could not open file location',
+            status: 'error',
+            duration: 3000,
+          });
+        }
+      } else {
+        toast({
+          title: 'File not found',
+          description: 'The file path is not available',
+          status: 'error',
+          duration: 3000,
+        });
+      }
+    } catch (error) {
+      toast({
+        title: 'Failed to show in folder',
+        description: error.message,
+        status: 'error',
+        duration: 3000,
+      });
+    }
   };
 
   const handleRecompress = async (item) => {
@@ -328,8 +395,40 @@ const HistoryView = () => {
                     </Td>
                     <Td>
                       <HStack spacing={2}>
-                        <Icon as={FiImage} color="whiteAlpha.500" />
-                        <Text noOfLines={1}>{item.originalName}</Text>
+                        {/* Real thumbnail instead of placeholder icon */}
+                        {item.outputPath || item.originalPath ? (
+                          <Box
+                            w="32px"
+                            h="32px"
+                            borderRadius="md"
+                            overflow="hidden"
+                            bg="whiteAlpha.100"
+                            border="1px solid"
+                            borderColor="whiteAlpha.200"
+                            flexShrink={0}
+                          >
+                            <Image
+                              src={`file://${item.outputPath || item.originalPath}`}
+                              alt={item.originalName}
+                              w="100%"
+                              h="100%"
+                              objectFit="cover"
+                              fallback={<Icon as={FiImage} color="whiteAlpha.500" w="100%" h="100%" />}
+                            />
+                          </Box>
+                        ) : (
+                          <Icon as={FiImage} color="whiteAlpha.500" />
+                        )}
+                        {/* Clickable filename that opens the compressed image */}
+                        <Text
+                          noOfLines={1}
+                          cursor="pointer"
+                          color="blue.400"
+                          _hover={{ color: "blue.300", textDecoration: "underline" }}
+                          onClick={() => handleOpenImage(item)}
+                        >
+                          {item.originalName}
+                        </Text>
                       </HStack>
                     </Td>
                     <Td>
@@ -339,11 +438,11 @@ const HistoryView = () => {
                         {item.type}
                       </Badge>
                     </Td>
-                    <Td>{formatBytes(item.originalSize)}</Td>
-                    <Td>{formatBytes(item.compressedSize || item.outputSize)}</Td>
+                    <Td>{formatBytes(item.originalSize || 0)}</Td>
+                    <Td>{formatBytes(item.compressedSize || item.outputSize || 0)}</Td>
                     <Td>
-                      {item.reductionPercentage ? (
-                        <Badge colorScheme="green">{item.reductionPercentage}%</Badge>
+                      {item.reductionPercentage && typeof item.reductionPercentage === 'number' ? (
+                        <Badge colorScheme="green">{Math.round(item.reductionPercentage)}%</Badge>
                       ) : (
                         '-'
                       )}
@@ -370,6 +469,7 @@ const HistoryView = () => {
                           </MenuItem>
                           <MenuItem
                             icon={<Icon as={FiFolder} />}
+                            onClick={() => handleShowInFolder(item)}
                           >
                             Show in Folder
                           </MenuItem>
@@ -484,6 +584,7 @@ const HistoryView = () => {
             <Button
               colorScheme="brand"
               leftIcon={<Icon as={FiFolder} />}
+              onClick={() => handleShowInFolder(selectedItem)}
             >
               Show in Folder
             </Button>

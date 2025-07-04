@@ -34,6 +34,17 @@ const useHistoryStore = create(
         // Load history from database
         loadHistory: async () => {
           try {
+            // First, fix any corrupted data
+            if (window.api.history.fixCorrupted) {
+              try {
+                await window.api.history.fixCorrupted();
+                console.log('Fixed corrupted history data');
+              } catch (error) {
+                console.warn('Failed to fix corrupted history:', error);
+              }
+            }
+
+            // Then load the clean history
             const response = await window.api.history.get();
             if (response.success) {
               set({ history: response.data });

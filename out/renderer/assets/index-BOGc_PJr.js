@@ -35516,7 +35516,7 @@ const createStoreImpl = (createState2) => {
     return () => listeners.delete(listener);
   };
   const destroy = () => {
-    if ((__vite_import_meta_env__$2 ? "development" : void 0) !== "production") {
+    if ((__vite_import_meta_env__$2 ? "production" : void 0) !== "production") {
       console.warn(
         "[DEPRECATED] The `destroy` method will be unsupported in a future version. Instead use unsubscribe function returned by subscribe. Everything will be garbage-collected if store is garbage-collected."
       );
@@ -35663,7 +35663,7 @@ const { useSyncExternalStoreWithSelector } = useSyncExternalStoreExports;
 let didWarnAboutEqualityFn = false;
 const identity = (arg) => arg;
 function useStore(api, selector = identity, equalityFn) {
-  if ((__vite_import_meta_env__$1 ? "development" : void 0) !== "production" && equalityFn && !didWarnAboutEqualityFn) {
+  if ((__vite_import_meta_env__$1 ? "production" : void 0) !== "production" && equalityFn && !didWarnAboutEqualityFn) {
     console.warn(
       "[DEPRECATED] Use `createWithEqualityFn` instead of `create` or use `useStoreWithEqualityFn` instead of `useStore`. They can be imported from 'zustand/traditional'. https://github.com/pmndrs/zustand/discussions/1937"
     );
@@ -35680,7 +35680,7 @@ function useStore(api, selector = identity, equalityFn) {
   return slice2;
 }
 const createImpl = (createState2) => {
-  if ((__vite_import_meta_env__$1 ? "development" : void 0) !== "production" && typeof createState2 !== "function") {
+  if ((__vite_import_meta_env__$1 ? "production" : void 0) !== "production" && typeof createState2 !== "function") {
     console.warn(
       "[DEPRECATED] Passing a vanilla store will be unsupported in a future version. Instead use `import { useStore } from 'zustand'`."
     );
@@ -35691,7 +35691,7 @@ const createImpl = (createState2) => {
   return useBoundStore;
 };
 const create = (createState2) => createState2 ? createImpl(createState2) : createImpl;
-const __vite_import_meta_env__ = { "BASE_URL": "./", "DEV": false, "MODE": "development", "PROD": true, "SSR": false };
+const __vite_import_meta_env__ = { "BASE_URL": "./", "DEV": false, "MODE": "production", "PROD": true, "SSR": false };
 const trackedConnections = /* @__PURE__ */ new Map();
 const getTrackedConnectionState = (name) => {
   const api = trackedConnections.get(name);
@@ -35722,11 +35722,11 @@ const devtoolsImpl = (fn2, devtoolsOptions = {}) => (set2, get2, api) => {
   const { enabled, anonymousActionType, store, ...options } = devtoolsOptions;
   let extensionConnector;
   try {
-    extensionConnector = (enabled != null ? enabled : (__vite_import_meta_env__ ? "development" : void 0) !== "production") && window.__REDUX_DEVTOOLS_EXTENSION__;
+    extensionConnector = (enabled != null ? enabled : (__vite_import_meta_env__ ? "production" : void 0) !== "production") && window.__REDUX_DEVTOOLS_EXTENSION__;
   } catch (_e) {
   }
   if (!extensionConnector) {
-    if ((__vite_import_meta_env__ ? "development" : void 0) !== "production" && enabled) {
+    if ((__vite_import_meta_env__ ? "production" : void 0) !== "production" && enabled) {
       console.warn(
         "[zustand devtools middleware] Please install/enable Redux devtools extension"
       );
@@ -35779,7 +35779,7 @@ const devtoolsImpl = (fn2, devtoolsOptions = {}) => (set2, get2, api) => {
     let didWarnAboutReservedActionType = false;
     const originalDispatch = api.dispatch;
     api.dispatch = (...a) => {
-      if ((__vite_import_meta_env__ ? "development" : void 0) !== "production" && a[0].type === "__setState" && !didWarnAboutReservedActionType) {
+      if ((__vite_import_meta_env__ ? "production" : void 0) !== "production" && a[0].type === "__setState" && !didWarnAboutReservedActionType) {
         console.warn(
           '[zustand devtools middleware] "__setState" action type is reserved to set state from the devtools. Avoid using it.'
         );
@@ -36249,7 +36249,7 @@ const newImpl = (config2, baseOptions) => (set2, get2, api) => {
 };
 const persistImpl = (config2, baseOptions) => {
   if ("getStorage" in baseOptions || "serialize" in baseOptions || "deserialize" in baseOptions) {
-    if ((__vite_import_meta_env__ ? "development" : void 0) !== "production") {
+    if ((__vite_import_meta_env__ ? "production" : void 0) !== "production") {
       console.warn(
         "[DEPRECATED] `getStorage`, `serialize` and `deserialize` options are deprecated. Use `storage` option instead."
       );
@@ -40623,13 +40623,21 @@ const BatchView = () => {
           }
           const fileExt = file.name.split(".").pop().toLowerCase();
           let fileSize = file.size || 0;
-          if (fileSize === 0 && window.api?.compression?.getFileStats) {
+          if (window.api?.compression?.getFileStats) {
             try {
               const stats = await window.api.compression.getFileStats(filePath);
-              fileSize = stats.size;
+              fileSize = stats.size || fileSize;
+              console.log(`File ${file.name} size: ${fileSize} bytes`);
             } catch (error) {
-              console.error("Failed to get file stats:", error);
+              console.error("Failed to get file stats for", file.name, ":", error);
+              if (!fileSize && file.size) {
+                fileSize = file.size;
+              }
             }
+          }
+          if (!fileSize || fileSize === 0) {
+            console.warn(`File ${file.name} has invalid size, using fallback`);
+            fileSize = 1024;
           }
           return {
             id: Date.now() + Math.random(),
@@ -40639,8 +40647,8 @@ const BatchView = () => {
             originalFormat: file.type ? file.type.split("/")[1] : fileExt,
             status: "pending",
             progress: 0,
-            // Create preview URL for images
-            previewUrl: filePath.startsWith("file://") ? filePath : `file://${filePath}`
+            // Create preview URL for images - use file:// protocol for Electron
+            previewUrl: filePath.startsWith("file://") ? filePath : `file:///${filePath.replace(/\\/g, "/")}`
           };
         })
       );
@@ -40720,8 +40728,9 @@ const BatchView = () => {
     }
   };
   const handlePauseBatch = async () => {
+    if (!currentBatchId) return;
     try {
-      await window.api.batch.pauseBatch();
+      await window.api.batch.pause(currentBatchId);
       setIsPaused(true);
     } catch (error) {
       toast({
@@ -40732,8 +40741,9 @@ const BatchView = () => {
     }
   };
   const handleResumeBatch = async () => {
+    if (!currentBatchId) return;
     try {
-      await window.api.batch.resumeBatch();
+      await window.api.batch.resume(currentBatchId);
       setIsPaused(false);
     } catch (error) {
       toast({
@@ -40812,6 +40822,7 @@ const BatchView = () => {
       const data = JSON.parse(event.data);
       if (data.type === "progress") {
         updateBatchStats({
+          total: batchItems.length,
           completed: data.completed,
           failed: data.failed,
           totalSaved: data.totalSaved
@@ -40831,6 +40842,13 @@ const BatchView = () => {
           });
         }
       } else if (data.type === "complete") {
+        const finalStats = {
+          total: batchItems.length,
+          completed: data.completed,
+          failed: data.failed,
+          totalSaved: data.totalSaved
+        };
+        updateBatchStats(finalStats);
         batchItems.forEach((item) => {
           if (item.status === "processing" || item.status === "pending") {
             updateBatchItem(item.id, {
@@ -40843,7 +40861,7 @@ const BatchView = () => {
         eventSource.close();
         toast({
           title: "Batch processing completed",
-          description: `Processed ${data.completed} images successfully`,
+          description: `Processed ${finalStats.completed} of ${finalStats.total} images successfully`,
           status: "success",
           duration: 5e3
         });
@@ -40947,10 +40965,15 @@ const BatchView = () => {
                   if (window.api?.compression?.getFileStats) {
                     try {
                       const stats = await window.api.compression.getFileStats(filePath);
-                      size2 = stats.size;
+                      size2 = stats.size || 0;
+                      console.log(`Dialog file ${name} size: ${size2} bytes`);
                     } catch (error) {
-                      console.error("Failed to get file stats:", error);
+                      console.error("Failed to get file stats for dialog file:", error);
                     }
+                  }
+                  if (!size2 || size2 === 0) {
+                    console.warn(`Dialog file ${name} has invalid size, using fallback`);
+                    size2 = 1024;
                   }
                   return {
                     path: filePath,
