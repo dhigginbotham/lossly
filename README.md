@@ -159,6 +159,28 @@ npm run lint             # Run ESLint
 - **SVGO** - SVG optimization and minification
 - **Built-in Electron** - Native image format support
 
+## 📸 Screenshots
+
+### Main Compression View
+![Main Compression Interface](docs/screenshots/compression-view.png)
+*Real-time side-by-side comparison with draggable divider and compression settings*
+
+### Batch Processing Dashboard
+![Batch Processing](docs/screenshots/batch-processing.png)
+*Process multiple images with real-time progress tracking and thumbnails*
+
+### Smart Presets System
+![Presets Management](docs/screenshots/presets-system.png)
+*Built-in and custom presets for different use cases and workflows*
+
+### Advanced History & Analytics
+![History View](docs/screenshots/history-analytics.png)
+*Comprehensive history tracking with search, filtering, and statistics*
+
+### Settings & Configuration
+![Settings Panel](docs/screenshots/settings-panel.png)
+*Fine-tune compression parameters and application preferences*
+
 ## 📸 Application Views
 
 ### 🖼️ Main Compression View
@@ -172,7 +194,7 @@ The primary interface for single image compression with real-time preview and si
 - File size and reduction statistics
 - Save and export options
 
-### 📦 Batch Processing View  
+### 📦 Batch Processing View
 Process multiple images simultaneously with professional workflow tools.
 
 **Key Features:**
@@ -188,7 +210,7 @@ Save and manage compression presets for different use cases.
 
 **Built-in Presets:**
 - **🌐 Web Optimized**: JPEG 85%, max 1920px width, progressive encoding
-- **📧 Email Attachment**: JPEG 70%, max 1024px width, metadata stripped  
+- **📧 Email Attachment**: JPEG 70%, max 1024px width, metadata stripped
 - **📱 Social Media**: JPEG 90%, max 2048px width, high quality
 - **✨ High Quality**: 95% quality, original dimensions, minimal compression
 
