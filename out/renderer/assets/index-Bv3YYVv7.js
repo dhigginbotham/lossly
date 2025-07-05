@@ -7505,14 +7505,14 @@ function getScrollParent$1(el2) {
 }
 function split(object, keys2) {
   const picked = {};
-  const omitted = {};
+  const omitted2 = {};
   for (const [key, value] of Object.entries(object)) {
     if (keys2.includes(key))
       picked[key] = value;
     else
-      omitted[key] = value;
+      omitted2[key] = value;
   }
-  return [picked, omitted];
+  return [picked, omitted2];
 }
 function splitProps(props, ...keys2) {
   const descriptors = Object.getOwnPropertyDescriptors(props);
@@ -16405,6 +16405,12 @@ createContext({
   name: "StylesContext",
   errorMessage: "useStyles: `styles` is undefined. Seems you forgot to wrap the components in `<StylesProvider />` "
 });
+function createStylesContext(componentName) {
+  return createContext({
+    name: `${componentName}StylesContext`,
+    errorMessage: `useStyles: "styles" is undefined. Seems you forgot to wrap the components in "<${componentName} />" `
+  });
+}
 function GlobalStyle() {
   const { colorMode } = useColorMode();
   return /* @__PURE__ */ jsxRuntimeExports.jsx(
@@ -25961,6 +25967,52 @@ const IconButton = forwardRef(
   }
 );
 IconButton.displayName = "IconButton";
+const [CardStylesProvider, useCardStyles] = createStylesContext("Card");
+const Card = forwardRef(function Card2(props, ref) {
+  const {
+    className,
+    children,
+    direction: direction2 = "column",
+    justify,
+    align,
+    ...rest
+  } = omitThemingProps(props);
+  const styles2 = useMultiStyleConfig("Card", props);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    chakra.div,
+    {
+      ref,
+      className: cx("chakra-card", className),
+      __css: {
+        display: "flex",
+        flexDirection: direction2,
+        justifyContent: justify,
+        alignItems: align,
+        position: "relative",
+        minWidth: 0,
+        wordWrap: "break-word",
+        ...styles2.container
+      },
+      ...rest,
+      children: /* @__PURE__ */ jsxRuntimeExports.jsx(CardStylesProvider, { value: styles2, children })
+    }
+  );
+});
+const CardBody = forwardRef(
+  function CardBody2(props, ref) {
+    const { className, ...rest } = props;
+    const styles2 = useCardStyles();
+    return /* @__PURE__ */ jsxRuntimeExports.jsx(
+      chakra.div,
+      {
+        ref,
+        className: cx("chakra-card__body", className),
+        __css: styles2.body,
+        ...rest
+      }
+    );
+  }
+);
 const Center = chakra("div", {
   baseStyle: {
     display: "flex",
@@ -32785,6 +32837,13 @@ const ModalOverlay = forwardRef(
   }
 );
 ModalOverlay.displayName = "ModalOverlay";
+function AlertDialog(props) {
+  const { leastDestructiveRef, ...rest } = props;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(Modal, { ...rest, initialFocusRef: leastDestructiveRef });
+}
+const AlertDialogContent = forwardRef(
+  (props, ref) => /* @__PURE__ */ jsxRuntimeExports.jsx(ModalContent, { ref, role: "alertdialog", ...props })
+);
 const TriangleDownIcon = (props) => /* @__PURE__ */ jsxRuntimeExports.jsx(Icon, { viewBox: "0 0 24 24", ...props, children: /* @__PURE__ */ jsxRuntimeExports.jsx(
   "path",
   {
@@ -34500,6 +34559,24 @@ const Tr = forwardRef((props, ref) => {
   const styles2 = useTableStyles();
   return /* @__PURE__ */ jsxRuntimeExports.jsx(chakra.tr, { ...props, ref, __css: styles2.tr });
 });
+const omitted = ["h", "minH", "height", "minHeight"];
+const Textarea = forwardRef((props, ref) => {
+  const styles2 = useStyleConfig("Textarea", props);
+  const { className, rows, ...rest } = omitThemingProps(props);
+  const textareaProps = useFormControl(rest);
+  const textareaStyles = rows ? omit(styles2, omitted) : styles2;
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(
+    chakra.textarea,
+    {
+      ref,
+      rows,
+      ...textareaProps,
+      className: cx("chakra-textarea", className),
+      __css: textareaStyles
+    }
+  );
+});
+Textarea.displayName = "Textarea";
 function getToastPlacement(position2, dir) {
   const computedPosition = position2 ?? "bottom";
   const logicals2 = {
@@ -35431,11 +35508,17 @@ function FiChevronRight(props) {
 function FiClock(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "circle", "attr": { "cx": "12", "cy": "12", "r": "10" }, "child": [] }, { "tag": "polyline", "attr": { "points": "12 6 12 12 16 14" }, "child": [] }] })(props);
 }
+function FiCopy(props) {
+  return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "rect", "attr": { "x": "9", "y": "9", "width": "13", "height": "13", "rx": "2", "ry": "2" }, "child": [] }, { "tag": "path", "attr": { "d": "M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" }, "child": [] }] })(props);
+}
 function FiCpu(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "rect", "attr": { "x": "4", "y": "4", "width": "16", "height": "16", "rx": "2", "ry": "2" }, "child": [] }, { "tag": "rect", "attr": { "x": "9", "y": "9", "width": "6", "height": "6" }, "child": [] }, { "tag": "line", "attr": { "x1": "9", "y1": "1", "x2": "9", "y2": "4" }, "child": [] }, { "tag": "line", "attr": { "x1": "15", "y1": "1", "x2": "15", "y2": "4" }, "child": [] }, { "tag": "line", "attr": { "x1": "9", "y1": "20", "x2": "9", "y2": "23" }, "child": [] }, { "tag": "line", "attr": { "x1": "15", "y1": "20", "x2": "15", "y2": "23" }, "child": [] }, { "tag": "line", "attr": { "x1": "20", "y1": "9", "x2": "23", "y2": "9" }, "child": [] }, { "tag": "line", "attr": { "x1": "20", "y1": "14", "x2": "23", "y2": "14" }, "child": [] }, { "tag": "line", "attr": { "x1": "1", "y1": "9", "x2": "4", "y2": "9" }, "child": [] }, { "tag": "line", "attr": { "x1": "1", "y1": "14", "x2": "4", "y2": "14" }, "child": [] }] })(props);
 }
 function FiDownload(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "path", "attr": { "d": "M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" }, "child": [] }, { "tag": "polyline", "attr": { "points": "7 10 12 15 17 10" }, "child": [] }, { "tag": "line", "attr": { "x1": "12", "y1": "15", "x2": "12", "y2": "3" }, "child": [] }] })(props);
+}
+function FiEdit2(props) {
+  return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "path", "attr": { "d": "M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z" }, "child": [] }] })(props);
 }
 function FiEye(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "path", "attr": { "d": "M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" }, "child": [] }, { "tag": "circle", "attr": { "cx": "12", "cy": "12", "r": "3" }, "child": [] }] })(props);
@@ -35475,6 +35558,9 @@ function FiPause(props) {
 }
 function FiPlay(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "polygon", "attr": { "points": "5 3 19 12 5 21 5 3" }, "child": [] }] })(props);
+}
+function FiPlus(props) {
+  return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "line", "attr": { "x1": "12", "y1": "5", "x2": "12", "y2": "19" }, "child": [] }, { "tag": "line", "attr": { "x1": "5", "y1": "12", "x2": "19", "y2": "12" }, "child": [] }] })(props);
 }
 function FiRefreshCw(props) {
   return GenIcon({ "attr": { "viewBox": "0 0 24 24", "fill": "none", "stroke": "currentColor", "strokeWidth": "2", "strokeLinecap": "round", "strokeLinejoin": "round" }, "child": [{ "tag": "polyline", "attr": { "points": "23 4 23 10 17 10" }, "child": [] }, { "tag": "polyline", "attr": { "points": "1 20 1 14 7 14" }, "child": [] }, { "tag": "path", "attr": { "d": "M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" }, "child": [] }] })(props);
@@ -39914,6 +40000,14 @@ const useHistoryStore = create(
         // Load history from database
         loadHistory: async () => {
           try {
+            if (window.api.history.fixCorrupted) {
+              try {
+                await window.api.history.fixCorrupted();
+                console.log("Fixed corrupted history data");
+              } catch (error) {
+                console.warn("Failed to fix corrupted history:", error);
+              }
+            }
             const response = await window.api.history.get();
             if (response.success) {
               set2({ history: response.data });
@@ -40781,6 +40875,9 @@ const BatchView = () => {
     }
   };
   const formatBytes2 = (bytes) => {
+    if (typeof bytes !== "number" || isNaN(bytes) || bytes === null || bytes === void 0) {
+      return "0 Bytes";
+    }
     if (bytes === 0) return "0 Bytes";
     const k2 = 1024;
     const sizes2 = ["Bytes", "KB", "MB", "GB"];
@@ -42902,6 +42999,9 @@ const HistoryView = () => {
     loadHistory();
   }, [loadHistory]);
   const formatBytes2 = (bytes) => {
+    if (typeof bytes !== "number" || isNaN(bytes) || bytes === null || bytes === void 0) {
+      return "0 Bytes";
+    }
     if (bytes === 0) return "0 Bytes";
     const k2 = 1024;
     const sizes2 = ["Bytes", "KB", "MB", "GB"];
@@ -42974,6 +43074,61 @@ const HistoryView = () => {
       status: "success",
       duration: 2e3
     });
+  };
+  const handleOpenImage = async (item) => {
+    try {
+      const imagePath = item.outputPath || item.originalPath;
+      if (imagePath) {
+        const result = await window.api.shell?.openPath?.(imagePath);
+        if (result && !result.success) {
+          window.open(`file://${imagePath}`, "_blank");
+        }
+      } else {
+        toast({
+          title: "Image not found",
+          description: "The image file path is not available",
+          status: "error",
+          duration: 3e3
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Failed to open image",
+        description: error.message,
+        status: "error",
+        duration: 3e3
+      });
+    }
+  };
+  const handleShowInFolder = async (item) => {
+    try {
+      const imagePath = item.outputPath || item.originalPath;
+      if (imagePath) {
+        const result = await window.api.shell?.showItemInFolder?.(imagePath);
+        if (result && !result.success) {
+          toast({
+            title: "Failed to show in folder",
+            description: result.error || "Could not open file location",
+            status: "error",
+            duration: 3e3
+          });
+        }
+      } else {
+        toast({
+          title: "File not found",
+          description: "The file path is not available",
+          status: "error",
+          duration: 3e3
+        });
+      }
+    } catch (error) {
+      toast({
+        title: "Failed to show in folder",
+        description: error.message,
+        status: "error",
+        duration: 3e3
+      });
+    }
   };
   const handleRecompress = async (item) => {
     toast({
@@ -43081,7 +43236,40 @@ const HistoryView = () => {
           onChange: () => handleSelectItem(item.id)
         }
       )),
-      /* @__PURE__ */ React$2.createElement(Td, null, /* @__PURE__ */ React$2.createElement(HStack, { spacing: 2 }, /* @__PURE__ */ React$2.createElement(Icon, { as: FiImage, color: "whiteAlpha.500" }), /* @__PURE__ */ React$2.createElement(Text, { noOfLines: 1 }, item.originalName))),
+      /* @__PURE__ */ React$2.createElement(Td, null, /* @__PURE__ */ React$2.createElement(HStack, { spacing: 2 }, item.outputPath || item.originalPath ? /* @__PURE__ */ React$2.createElement(
+        Box,
+        {
+          w: "32px",
+          h: "32px",
+          borderRadius: "md",
+          overflow: "hidden",
+          bg: "whiteAlpha.100",
+          border: "1px solid",
+          borderColor: "whiteAlpha.200",
+          flexShrink: 0
+        },
+        /* @__PURE__ */ React$2.createElement(
+          Image$1,
+          {
+            src: `file://${item.outputPath || item.originalPath}`,
+            alt: item.originalName,
+            w: "100%",
+            h: "100%",
+            objectFit: "cover",
+            fallback: /* @__PURE__ */ React$2.createElement(Icon, { as: FiImage, color: "whiteAlpha.500", w: "100%", h: "100%" })
+          }
+        )
+      ) : /* @__PURE__ */ React$2.createElement(Icon, { as: FiImage, color: "whiteAlpha.500" }), /* @__PURE__ */ React$2.createElement(
+        Text,
+        {
+          noOfLines: 1,
+          cursor: "pointer",
+          color: "blue.400",
+          _hover: { color: "blue.300", textDecoration: "underline" },
+          onClick: () => handleOpenImage(item)
+        },
+        item.originalName
+      ))),
       /* @__PURE__ */ React$2.createElement(Td, null, /* @__PURE__ */ React$2.createElement(
         Badge,
         {
@@ -43089,9 +43277,9 @@ const HistoryView = () => {
         },
         item.type
       )),
-      /* @__PURE__ */ React$2.createElement(Td, null, formatBytes2(item.originalSize)),
-      /* @__PURE__ */ React$2.createElement(Td, null, formatBytes2(item.compressedSize || item.outputSize)),
-      /* @__PURE__ */ React$2.createElement(Td, null, item.reductionPercentage ? /* @__PURE__ */ React$2.createElement(Badge, { colorScheme: "green" }, item.reductionPercentage, "%") : "-"),
+      /* @__PURE__ */ React$2.createElement(Td, null, formatBytes2(item.originalSize || 0)),
+      /* @__PURE__ */ React$2.createElement(Td, null, formatBytes2(item.compressedSize || item.outputSize || 0)),
+      /* @__PURE__ */ React$2.createElement(Td, null, item.reductionPercentage && typeof item.reductionPercentage === "number" ? /* @__PURE__ */ React$2.createElement(Badge, { colorScheme: "green" }, Math.round(item.reductionPercentage), "%") : "-"),
       /* @__PURE__ */ React$2.createElement(Td, null, /* @__PURE__ */ React$2.createElement(Tooltip, { label: formatDate(item.timestamp), placement: "top" }, /* @__PURE__ */ React$2.createElement(Text, { fontSize: "xs" }, format(new Date(item.timestamp), "MMM dd")))),
       /* @__PURE__ */ React$2.createElement(Td, null, /* @__PURE__ */ React$2.createElement(Menu, null, /* @__PURE__ */ React$2.createElement(
         MenuButton,
@@ -43111,7 +43299,8 @@ const HistoryView = () => {
       ), /* @__PURE__ */ React$2.createElement(
         MenuItem,
         {
-          icon: /* @__PURE__ */ React$2.createElement(Icon, { as: FiFolder })
+          icon: /* @__PURE__ */ React$2.createElement(Icon, { as: FiFolder }),
+          onClick: () => handleShowInFolder(item)
         },
         "Show in Folder"
       ), /* @__PURE__ */ React$2.createElement(
@@ -43153,11 +43342,407 @@ const HistoryView = () => {
     Button,
     {
       colorScheme: "brand",
-      leftIcon: /* @__PURE__ */ React$2.createElement(Icon, { as: FiFolder })
+      leftIcon: /* @__PURE__ */ React$2.createElement(Icon, { as: FiFolder }),
+      onClick: () => handleShowInFolder(selectedItem)
     },
     "Show in Folder"
   )))));
 };
+const defaultPresets = [
+  {
+    id: "web-optimized",
+    name: "Web Optimized",
+    description: "Best for website images with good quality and reasonable file size",
+    settings: {
+      format: "jpeg",
+      quality: 85,
+      resize: { maxWidth: 1920, maxHeight: null, maintainAspectRatio: true },
+      advanced: { progressive: true, stripMetadata: true, optimizationLevel: 3 }
+    },
+    icon: "🌐",
+    isDefault: true
+  },
+  {
+    id: "email-attachment",
+    name: "Email Attachment",
+    description: "Reduce file size for email compatibility (under 25MB)",
+    settings: {
+      format: "jpeg",
+      quality: 70,
+      resize: { maxWidth: 1024, maxHeight: null, maintainAspectRatio: true },
+      advanced: { progressive: false, stripMetadata: true, optimizationLevel: 6 }
+    },
+    icon: "📧",
+    isDefault: true
+  },
+  {
+    id: "social-media",
+    name: "Social Media",
+    description: "Optimized for social media platforms with high quality",
+    settings: {
+      format: "jpeg",
+      quality: 90,
+      resize: { maxWidth: 2048, maxHeight: null, maintainAspectRatio: true },
+      advanced: { progressive: true, stripMetadata: true, optimizationLevel: 3 }
+    },
+    icon: "📱",
+    isDefault: true
+  },
+  {
+    id: "high-quality",
+    name: "High Quality",
+    description: "Minimal compression for maximum quality retention",
+    settings: {
+      format: "same",
+      quality: 95,
+      resize: { maxWidth: null, maxHeight: null, maintainAspectRatio: true },
+      advanced: { progressive: true, stripMetadata: false, optimizationLevel: 1 }
+    },
+    icon: "✨",
+    isDefault: true
+  }
+];
+function PresetsView() {
+  const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { isOpen: isDeleteOpen, onOpen: onDeleteOpen, onClose: onDeleteClose } = useDisclosure();
+  const [editingPreset, setEditingPreset] = reactExports.useState(null);
+  const [deletePresetId, setDeletePresetId] = reactExports.useState(null);
+  const cancelRef = React$2.useRef();
+  const {
+    presets,
+    compressionSettings,
+    addPreset,
+    removePreset,
+    updatePreset,
+    updateCompressionSettings,
+    loadSettings,
+    saveSettings
+  } = useSettingsStore();
+  const allPresets = [...defaultPresets, ...presets];
+  reactExports.useEffect(() => {
+    loadSettings();
+  }, [loadSettings]);
+  const handleApplyPreset = async (preset) => {
+    try {
+      updateCompressionSettings(preset.settings);
+      await saveSettings();
+      toast({
+        title: "Preset Applied",
+        description: `"${preset.name}" settings have been applied`,
+        status: "success",
+        duration: 3e3
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to apply preset",
+        status: "error",
+        duration: 3e3
+      });
+    }
+  };
+  const handleCreatePreset = () => {
+    setEditingPreset({
+      id: "",
+      name: "",
+      description: "",
+      settings: { ...compressionSettings },
+      icon: "⚙️",
+      isDefault: false
+    });
+    onOpen();
+  };
+  const handleEditPreset = (preset) => {
+    setEditingPreset({ ...preset });
+    onOpen();
+  };
+  const handleDeletePreset = (presetId) => {
+    setDeletePresetId(presetId);
+    onDeleteOpen();
+  };
+  const confirmDelete = async () => {
+    try {
+      removePreset(deletePresetId);
+      await saveSettings();
+      toast({
+        title: "Preset Deleted",
+        status: "info",
+        duration: 3e3
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete preset",
+        status: "error",
+        duration: 3e3
+      });
+    }
+    onDeleteClose();
+    setDeletePresetId(null);
+  };
+  const handleDuplicatePreset = async (preset) => {
+    try {
+      const newPreset = {
+        name: `${preset.name} (Copy)`,
+        description: preset.description,
+        settings: { ...preset.settings },
+        icon: preset.icon
+      };
+      addPreset(newPreset);
+      await saveSettings();
+      toast({
+        title: "Preset Duplicated",
+        description: `Created "${newPreset.name}"`,
+        status: "success",
+        duration: 3e3
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to duplicate preset",
+        status: "error",
+        duration: 3e3
+      });
+    }
+  };
+  const handleSavePreset = async () => {
+    if (!editingPreset?.name.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a preset name",
+        status: "error",
+        duration: 3e3
+      });
+      return;
+    }
+    try {
+      if (editingPreset.id) {
+        updatePreset(editingPreset.id, editingPreset);
+      } else {
+        addPreset({
+          name: editingPreset.name,
+          description: editingPreset.description,
+          settings: editingPreset.settings,
+          icon: editingPreset.icon
+        });
+      }
+      await saveSettings();
+      toast({
+        title: "Preset Saved",
+        description: `"${editingPreset.name}" has been saved`,
+        status: "success",
+        duration: 3e3
+      });
+      onClose();
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to save preset",
+        status: "error",
+        duration: 3e3
+      });
+    }
+  };
+  const updateEditingPreset = (field, value) => {
+    setEditingPreset((prev2) => ({
+      ...prev2,
+      [field]: value
+    }));
+  };
+  const updateEditingSettings = (field, value) => {
+    setEditingPreset((prev2) => ({
+      ...prev2,
+      settings: {
+        ...prev2.settings,
+        [field]: value
+      }
+    }));
+  };
+  const updateEditingAdvanced = (field, value) => {
+    setEditingPreset((prev2) => ({
+      ...prev2,
+      settings: {
+        ...prev2.settings,
+        advanced: {
+          ...prev2.settings.advanced,
+          [field]: value
+        }
+      }
+    }));
+  };
+  const updateEditingResize = (field, value) => {
+    setEditingPreset((prev2) => ({
+      ...prev2,
+      settings: {
+        ...prev2.settings,
+        resize: {
+          ...prev2.settings.resize,
+          [field]: value
+        }
+      }
+    }));
+  };
+  return /* @__PURE__ */ React$2.createElement(Box, { h: "full", p: 6, overflow: "auto" }, /* @__PURE__ */ React$2.createElement(VStack, { spacing: 6, align: "stretch" }, /* @__PURE__ */ React$2.createElement(HStack, { justify: "space-between" }, /* @__PURE__ */ React$2.createElement(VStack, { align: "start", spacing: 1 }, /* @__PURE__ */ React$2.createElement(Heading, { size: "lg" }, "Compression Presets"), /* @__PURE__ */ React$2.createElement(Text, { fontSize: "sm", color: "whiteAlpha.700" }, "Save and manage your favorite compression settings")), /* @__PURE__ */ React$2.createElement(
+    Button,
+    {
+      leftIcon: /* @__PURE__ */ React$2.createElement(FiPlus, null),
+      colorScheme: "brand",
+      onClick: handleCreatePreset
+    },
+    "Create Preset"
+  )), allPresets.length === 0 ? /* @__PURE__ */ React$2.createElement(Center, { h: "300px" }, /* @__PURE__ */ React$2.createElement(VStack, { spacing: 4 }, /* @__PURE__ */ React$2.createElement(Icon, { as: FiSettings, boxSize: 16, color: "whiteAlpha.300" }), /* @__PURE__ */ React$2.createElement(Text, { color: "whiteAlpha.500" }, "No presets available"), /* @__PURE__ */ React$2.createElement(Button, { leftIcon: /* @__PURE__ */ React$2.createElement(FiPlus, null), colorScheme: "brand", onClick: handleCreatePreset }, "Create Your First Preset"))) : /* @__PURE__ */ React$2.createElement(SimpleGrid, { columns: { base: 1, md: 2, lg: 3, xl: 4 }, spacing: 4 }, allPresets.map((preset) => /* @__PURE__ */ React$2.createElement(
+    Card,
+    {
+      key: preset.id,
+      bg: "whiteAlpha.50",
+      backdropFilter: "blur(10px)",
+      borderWidth: "1px",
+      borderColor: "whiteAlpha.200",
+      _hover: { transform: "translateY(-2px)", shadow: "lg" },
+      transition: "all 0.2s"
+    },
+    /* @__PURE__ */ React$2.createElement(CardBody, null, /* @__PURE__ */ React$2.createElement(VStack, { align: "stretch", spacing: 4 }, /* @__PURE__ */ React$2.createElement(HStack, { justify: "space-between" }, /* @__PURE__ */ React$2.createElement(HStack, { spacing: 2 }, /* @__PURE__ */ React$2.createElement(Text, { fontSize: "2xl" }, preset.icon), /* @__PURE__ */ React$2.createElement(VStack, { align: "start", spacing: 0 }, /* @__PURE__ */ React$2.createElement(Text, { fontWeight: "bold" }, preset.name), preset.isDefault && /* @__PURE__ */ React$2.createElement(Badge, { size: "sm", colorScheme: "blue" }, "Default"))), /* @__PURE__ */ React$2.createElement(Menu, null, /* @__PURE__ */ React$2.createElement(
+      MenuButton,
+      {
+        as: IconButton,
+        icon: /* @__PURE__ */ React$2.createElement(FiMoreVertical, null),
+        size: "sm",
+        variant: "ghost"
+      }
+    ), /* @__PURE__ */ React$2.createElement(MenuList, null, /* @__PURE__ */ React$2.createElement(
+      MenuItem,
+      {
+        icon: /* @__PURE__ */ React$2.createElement(FiEdit2, null),
+        onClick: () => handleEditPreset(preset),
+        isDisabled: preset.isDefault
+      },
+      "Edit"
+    ), /* @__PURE__ */ React$2.createElement(
+      MenuItem,
+      {
+        icon: /* @__PURE__ */ React$2.createElement(FiCopy, null),
+        onClick: () => handleDuplicatePreset(preset)
+      },
+      "Duplicate"
+    ), /* @__PURE__ */ React$2.createElement(
+      MenuItem,
+      {
+        icon: /* @__PURE__ */ React$2.createElement(FiTrash2, null),
+        onClick: () => handleDeletePreset(preset.id),
+        isDisabled: preset.isDefault,
+        color: "red.400"
+      },
+      "Delete"
+    )))), /* @__PURE__ */ React$2.createElement(Text, { fontSize: "sm", color: "whiteAlpha.600", noOfLines: 3 }, preset.description), /* @__PURE__ */ React$2.createElement(HStack, { spacing: 2, flexWrap: "wrap" }, /* @__PURE__ */ React$2.createElement(Badge, { colorScheme: "purple" }, preset.settings.format === "same" ? "Original" : preset.settings.format.toUpperCase()), /* @__PURE__ */ React$2.createElement(Badge, { colorScheme: "green" }, preset.settings.quality, "%"), preset.settings.resize?.maxWidth && /* @__PURE__ */ React$2.createElement(Badge, { colorScheme: "blue" }, "↔ ", preset.settings.resize.maxWidth, "px")), /* @__PURE__ */ React$2.createElement(
+      Button,
+      {
+        size: "sm",
+        colorScheme: "brand",
+        onClick: () => handleApplyPreset(preset),
+        w: "full",
+        leftIcon: /* @__PURE__ */ React$2.createElement(FiCheck, null)
+      },
+      "Apply Preset"
+    )))
+  )))), /* @__PURE__ */ React$2.createElement(Modal, { isOpen, onClose, size: "xl" }, /* @__PURE__ */ React$2.createElement(ModalOverlay, { backdropFilter: "blur(10px)" }), /* @__PURE__ */ React$2.createElement(ModalContent, { bg: "gray.900", borderColor: "whiteAlpha.200", borderWidth: "1px" }, /* @__PURE__ */ React$2.createElement(ModalHeader, null, editingPreset?.id ? "Edit Preset" : "Create New Preset"), /* @__PURE__ */ React$2.createElement(ModalCloseButton, null), /* @__PURE__ */ React$2.createElement(ModalBody, null, /* @__PURE__ */ React$2.createElement(VStack, { spacing: 6 }, /* @__PURE__ */ React$2.createElement(SimpleGrid, { columns: 2, spacing: 4, w: "full" }, /* @__PURE__ */ React$2.createElement(FormControl, { isRequired: true }, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Preset Name"), /* @__PURE__ */ React$2.createElement(
+    Input,
+    {
+      value: editingPreset?.name || "",
+      onChange: (e2) => updateEditingPreset("name", e2.target.value),
+      placeholder: "e.g., Web Optimized"
+    }
+  )), /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Icon"), /* @__PURE__ */ React$2.createElement(
+    Input,
+    {
+      value: editingPreset?.icon || "",
+      onChange: (e2) => updateEditingPreset("icon", e2.target.value),
+      placeholder: "Enter an emoji",
+      maxLength: 2
+    }
+  ))), /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Description"), /* @__PURE__ */ React$2.createElement(
+    Textarea,
+    {
+      value: editingPreset?.description || "",
+      onChange: (e2) => updateEditingPreset("description", e2.target.value),
+      placeholder: "Describe when to use this preset...",
+      rows: 2
+    }
+  )), /* @__PURE__ */ React$2.createElement(Box, { w: "full" }, /* @__PURE__ */ React$2.createElement(Text, { fontWeight: "bold", mb: 4 }, "Compression Settings"), /* @__PURE__ */ React$2.createElement(SimpleGrid, { columns: 2, spacing: 4 }, /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Output Format"), /* @__PURE__ */ React$2.createElement(
+    Select,
+    {
+      value: editingPreset?.settings?.format || "same",
+      onChange: (e2) => updateEditingSettings("format", e2.target.value)
+    },
+    /* @__PURE__ */ React$2.createElement("option", { value: "same" }, "Same as Original"),
+    /* @__PURE__ */ React$2.createElement("option", { value: "jpeg" }, "JPEG"),
+    /* @__PURE__ */ React$2.createElement("option", { value: "png" }, "PNG"),
+    /* @__PURE__ */ React$2.createElement("option", { value: "webp" }, "WebP"),
+    /* @__PURE__ */ React$2.createElement("option", { value: "gif" }, "GIF")
+  )), /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Quality (%)"), /* @__PURE__ */ React$2.createElement(
+    NumberInput,
+    {
+      value: editingPreset?.settings?.quality || 85,
+      onChange: (value) => updateEditingSettings("quality", parseInt(value)),
+      min: 1,
+      max: 100
+    },
+    /* @__PURE__ */ React$2.createElement(NumberInputField, null),
+    /* @__PURE__ */ React$2.createElement(NumberInputStepper, null, /* @__PURE__ */ React$2.createElement(NumberIncrementStepper, null), /* @__PURE__ */ React$2.createElement(NumberDecrementStepper, null))
+  )), /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Max Width (px)"), /* @__PURE__ */ React$2.createElement(
+    NumberInput,
+    {
+      value: editingPreset?.settings?.resize?.maxWidth || "",
+      onChange: (value) => updateEditingResize("maxWidth", value ? parseInt(value) : null),
+      min: 1
+    },
+    /* @__PURE__ */ React$2.createElement(NumberInputField, { placeholder: "No limit" }),
+    /* @__PURE__ */ React$2.createElement(NumberInputStepper, null, /* @__PURE__ */ React$2.createElement(NumberIncrementStepper, null), /* @__PURE__ */ React$2.createElement(NumberDecrementStepper, null))
+  )), /* @__PURE__ */ React$2.createElement(FormControl, null, /* @__PURE__ */ React$2.createElement(FormLabel, null, "Max Height (px)"), /* @__PURE__ */ React$2.createElement(
+    NumberInput,
+    {
+      value: editingPreset?.settings?.resize?.maxHeight || "",
+      onChange: (value) => updateEditingResize("maxHeight", value ? parseInt(value) : null),
+      min: 1
+    },
+    /* @__PURE__ */ React$2.createElement(NumberInputField, { placeholder: "No limit" }),
+    /* @__PURE__ */ React$2.createElement(NumberInputStepper, null, /* @__PURE__ */ React$2.createElement(NumberIncrementStepper, null), /* @__PURE__ */ React$2.createElement(NumberDecrementStepper, null))
+  ))), /* @__PURE__ */ React$2.createElement(Text, { fontWeight: "bold", mt: 6, mb: 4 }, "Advanced Settings"), /* @__PURE__ */ React$2.createElement(VStack, { spacing: 4, align: "stretch" }, /* @__PURE__ */ React$2.createElement(HStack, { justify: "space-between" }, /* @__PURE__ */ React$2.createElement(Text, null, "Progressive Encoding"), /* @__PURE__ */ React$2.createElement(
+    Switch,
+    {
+      isChecked: editingPreset?.settings?.advanced?.progressive || false,
+      onChange: (e2) => updateEditingAdvanced("progressive", e2.target.checked)
+    }
+  )), /* @__PURE__ */ React$2.createElement(HStack, { justify: "space-between" }, /* @__PURE__ */ React$2.createElement(Text, null, "Strip Metadata"), /* @__PURE__ */ React$2.createElement(
+    Switch,
+    {
+      isChecked: editingPreset?.settings?.advanced?.stripMetadata || false,
+      onChange: (e2) => updateEditingAdvanced("stripMetadata", e2.target.checked)
+    }
+  )), /* @__PURE__ */ React$2.createElement(HStack, { justify: "space-between" }, /* @__PURE__ */ React$2.createElement(Text, null, "Maintain Aspect Ratio"), /* @__PURE__ */ React$2.createElement(
+    Switch,
+    {
+      isChecked: editingPreset?.settings?.resize?.maintainAspectRatio !== false,
+      onChange: (e2) => updateEditingResize("maintainAspectRatio", e2.target.checked)
+    }
+  )))))), /* @__PURE__ */ React$2.createElement(ModalFooter, null, /* @__PURE__ */ React$2.createElement(Button, { variant: "ghost", mr: 3, onClick: onClose }, "Cancel"), /* @__PURE__ */ React$2.createElement(
+    Button,
+    {
+      colorScheme: "brand",
+      onClick: handleSavePreset,
+      isDisabled: !editingPreset?.name?.trim()
+    },
+    "Save Preset"
+  )))), /* @__PURE__ */ React$2.createElement(
+    AlertDialog,
+    {
+      isOpen: isDeleteOpen,
+      leastDestructiveRef: cancelRef,
+      onClose: onDeleteClose
+    },
+    /* @__PURE__ */ React$2.createElement(ModalOverlay, null, /* @__PURE__ */ React$2.createElement(AlertDialogContent, { bg: "gray.900" }, /* @__PURE__ */ React$2.createElement(ModalHeader, { fontSize: "lg", fontWeight: "bold" }, "Delete Preset"), /* @__PURE__ */ React$2.createElement(ModalBody, null, "Are you sure you want to delete this preset? This action cannot be undone."), /* @__PURE__ */ React$2.createElement(ModalFooter, null, /* @__PURE__ */ React$2.createElement(Button, { ref: cancelRef, onClick: onDeleteClose }, "Cancel"), /* @__PURE__ */ React$2.createElement(Button, { colorScheme: "red", onClick: confirmDelete, ml: 3 }, "Delete"))))
+  ));
+}
 const SettingsView = () => {
   const toast = useToast();
   const { colorMode, toggleColorMode } = useColorMode();
@@ -43472,6 +44057,8 @@ function MainContent() {
         return /* @__PURE__ */ React$2.createElement(ConversionView, null);
       case "history":
         return /* @__PURE__ */ React$2.createElement(HistoryView, null);
+      case "presets":
+        return /* @__PURE__ */ React$2.createElement(PresetsView, null);
       case "settings":
         return /* @__PURE__ */ React$2.createElement(SettingsView, null);
       default:

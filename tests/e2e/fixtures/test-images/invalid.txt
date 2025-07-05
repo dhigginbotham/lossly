@@ -1,0 +1,1 @@
+This is not an image file. It should cause an error when processed by the image compression tool.
