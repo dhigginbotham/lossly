@@ -5,12 +5,41 @@ directories:
   buildResources: build
 
 files:
-  - "dist/**/*"
+  # ✅ Only include the necessary built application files
+  - "dist/main/**/*"
+  - "dist/preload/**/*"
+  - "dist/renderer/**/*"
+  - "package.json"
+  
+  # ❌ Exclude all node_modules (we don't need them in the final package)
   - "!**/node_modules/**/*"
-  - "node_modules/**/*"
+  
+  # ❌ Exclude all build artifacts and packages (prevents recursive inclusion)
+  - "!dist/*.{deb,snap,AppImage,dmg,exe,rpm}"
+  - "!dist/linux-unpacked/**/*"
+  - "!dist/__*/**/*"
+  - "!dist/*-unpacked/**/*"
+  - "!dist/win-*/**/*"
+  - "!dist/mac/**/*"
+  
+  # ❌ Exclude development and test files
   - "!**/*.{map,ts,tsx}"
   - "!**/test/**/*"
+  - "!**/tests/**/*"
   - "!**/__tests__/**/*"
+  - "!**/{test,tests,spec,__tests__}/**/*"
+  - "!**/coverage/**/*"
+  - "!**/.nyc_output/**/*"
+  
+  # ❌ Exclude source files and development artifacts
+  - "!src/**/*"
+  - "!tests/**/*"
+  - "!docs/**/*"
+  - "!*.config.{js,ts}"
+  - "!.eslintrc.*"
+  - "!.prettierrc*"
+  - "!*.md"
+  - "!.git*"
 
 extraResources:
   - from: "public/"
