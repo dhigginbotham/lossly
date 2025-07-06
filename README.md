@@ -1,6 +1,6 @@
 # 🎯 Lossly - Beautiful Image Compression
 
-![Lossly Logo](public/icon.png)
+![Lossly Logo](https://github.com/dhigginbotham/lossly/blob/master/resources/icon.png)
 
 Lossly is a VIBE-coded Electron application that provides beautiful image compression with real-time preview. Built with love using Electron, React, Chakra UI, and powered by multiple compression engines.
 
@@ -406,6 +406,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Lossly v1.1.0** - Making image compression beautiful, intelligent, and efficient! 🚀
+**Lossly v1.2.0** - Making image compression beautiful, intelligent, and efficient! 🚀
 
-*New in v1.1.0: Enhanced history management, comprehensive presets system, advanced batch processing, data export capabilities, and shell integration for professional workflows.*
+*New in v1.2.0: Enhanced history management, comprehensive presets system, advanced batch processing, data export capabilities, shell integration for professional workflows, and improved stability with advanced error handling.*
